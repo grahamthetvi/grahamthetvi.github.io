@@ -10,10 +10,10 @@
 </head>
 <body>
     <a href="#typing-area" class="skip-link">Skip to typing area</a>
-
+ 
     <main id="app" class="app-container" role="application"
           aria-label="CVI Type Talker - Type words to hear them spoken and see images">
-
+ 
         <!-- Left panel: typing display -->
         <section id="typing-area" class="typing-panel">
             <div id="text-display" class="text-display" role="textbox"
@@ -22,7 +22,7 @@
                 <span class="cursor" aria-hidden="true">|</span>
             </div>
         </section>
-
+ 
         <!-- Right panel: image display -->
         <aside id="image-panel" class="image-panel" aria-live="polite">
             <div id="image-container" class="image-container">
@@ -32,12 +32,12 @@
             </div>
         </aside>
     </main>
-
+ 
     <!-- Status bar -->
     <footer id="status-bar" class="status-bar" role="status" aria-live="polite">
         <p id="status-text">Type a letter to begin</p>
     </footer>
-
+ 
     <!-- Instructions overlay -->
     <div id="instructions-overlay" class="overlay" role="dialog"
          aria-labelledby="instructions-title" aria-modal="true">
@@ -51,7 +51,7 @@
             </button>
         </div>
     </div>
-
+ 
     <script src="js/speech.js"></script>
     <script src="js/images.js"></script>
     <script src="js/display.js"></script>
