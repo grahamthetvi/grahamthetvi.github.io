@@ -18,6 +18,8 @@ const CVISettings = {
     },
 
     current: {},
+    previousFocus: null,
+    focusableElements: [],
 
     // Common profanity words to filter
     profanityList: [
@@ -159,12 +161,40 @@ const CVISettings = {
     openPanel() {
         var panel = document.getElementById('settings-panel');
         if (panel) {
+            // Store the currently focused element
+            this.previousFocus = document.activeElement;
+
             panel.classList.add('visible');
             this.populateUI();
+
             // Disable keyboard input while settings are open
             if (CVIKeyboard) {
                 CVIKeyboard.disable();
             }
+
+            // Get all focusable elements within the panel
+            this.focusableElements = panel.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+
+            // Set up focus trap
+            if (this.focusableElements.length > 0) {
+                // Focus the first element (the h2 with tabindex or first input)
+                var settingsTitle = document.getElementById('settings-title');
+                if (settingsTitle) {
+                    settingsTitle.setAttribute('tabindex', '-1');
+                    settingsTitle.focus();
+                }
+
+                // Add focus trap listeners
+                var firstFocusable = this.focusableElements[0];
+                var lastFocusable = this.focusableElements[this.focusableElements.length - 1];
+
+                panel.addEventListener('keydown', this._handleFocusTrap.bind(this, firstFocusable, lastFocusable));
+            }
+
+            // Announce to screen readers
+            this._announceToScreenReader('Settings panel opened');
         }
     },
 
@@ -175,6 +205,7 @@ const CVISettings = {
         var panel = document.getElementById('settings-panel');
         if (panel) {
             panel.classList.remove('visible');
+
             // Re-enable keyboard input
             if (CVIKeyboard && CVIKeyboard.enabled !== undefined) {
                 var overlay = document.getElementById('instructions-overlay');
@@ -182,7 +213,57 @@ const CVISettings = {
                     CVIKeyboard.enable();
                 }
             }
+
+            // Restore focus to the element that opened the panel
+            if (this.previousFocus && this.previousFocus.focus) {
+                this.previousFocus.focus();
+            }
+
+            // Announce to screen readers
+            this._announceToScreenReader('Settings panel closed');
         }
+    },
+
+    /**
+     * Handle focus trapping within the dialog
+     */
+    _handleFocusTrap(firstFocusable, lastFocusable, e) {
+        if (e.key === 'Tab') {
+            if (e.shiftKey) {
+                // Shift + Tab
+                if (document.activeElement === firstFocusable) {
+                    e.preventDefault();
+                    lastFocusable.focus();
+                }
+            } else {
+                // Tab
+                if (document.activeElement === lastFocusable) {
+                    e.preventDefault();
+                    firstFocusable.focus();
+                }
+            }
+        }
+    },
+
+    /**
+     * Announce messages to screen readers
+     */
+    _announceToScreenReader(message) {
+        var announcer = document.getElementById('sr-announcer');
+        if (!announcer) {
+            announcer = document.createElement('div');
+            announcer.id = 'sr-announcer';
+            announcer.setAttribute('role', 'status');
+            announcer.setAttribute('aria-live', 'polite');
+            announcer.setAttribute('aria-atomic', 'true');
+            announcer.style.position = 'absolute';
+            announcer.style.left = '-10000px';
+            announcer.style.width = '1px';
+            announcer.style.height = '1px';
+            announcer.style.overflow = 'hidden';
+            document.body.appendChild(announcer);
+        }
+        announcer.textContent = message;
     },
 
     /**
