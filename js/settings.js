@@ -7,6 +7,7 @@ const CVISettings = {
         fontFamily: 'Arial, sans-serif',
         fontSize: 60,
         fontColor: '#FFFFFF',
+        backgroundColor: '#000000',
         bubbleLettersEnabled: false,
         bubbleColor: '#FFFF00',
         bubbleSize: 4,
@@ -283,6 +284,9 @@ const CVISettings = {
         var fontColor = document.getElementById('font-color');
         if (fontColor) fontColor.value = this.current.fontColor;
 
+        var backgroundColor = document.getElementById('background-color');
+        if (backgroundColor) backgroundColor.value = this.current.backgroundColor;
+
         var bubbleEnabled = document.getElementById('bubble-letters-enabled');
         if (bubbleEnabled) bubbleEnabled.checked = this.current.bubbleLettersEnabled;
 
@@ -333,6 +337,9 @@ const CVISettings = {
         var fontColor = document.getElementById('font-color');
         if (fontColor) this.current.fontColor = fontColor.value;
 
+        var backgroundColor = document.getElementById('background-color');
+        if (backgroundColor) this.current.backgroundColor = backgroundColor.value;
+
         var bubbleEnabled = document.getElementById('bubble-letters-enabled');
         if (bubbleEnabled) this.current.bubbleLettersEnabled = bubbleEnabled.checked;
 
@@ -373,6 +380,9 @@ const CVISettings = {
             textDisplay.style.fontFamily = this.current.fontFamily;
             textDisplay.style.fontSize = this.current.fontSize + 'px';
             textDisplay.style.color = this.current.fontColor;
+
+            // Apply background color
+            document.body.style.backgroundColor = this.current.backgroundColor;
 
             // Apply bubble letters
             if (this.current.bubbleLettersEnabled) {
