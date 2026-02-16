@@ -15,7 +15,8 @@ const CVISettings = {
         removeBackground: false,
         filterProfanity: true,
         customWordListEnabled: false,
-        customWordList: ''
+        customWordList: '',
+        blockedWordList: ''
     },
 
     current: {},
@@ -314,6 +315,9 @@ const CVISettings = {
 
         var customList = document.getElementById('custom-word-list');
         if (customList) customList.value = this.current.customWordList;
+
+        var blockedList = document.getElementById('blocked-word-list');
+        if (blockedList) blockedList.value = this.current.blockedWordList;
     },
 
     /**
@@ -355,6 +359,9 @@ const CVISettings = {
 
         var customList = document.getElementById('custom-word-list');
         if (customList) this.current.customWordList = customList.value;
+
+        var blockedList = document.getElementById('blocked-word-list');
+        if (blockedList) this.current.blockedWordList = blockedList.value;
     },
 
     /**
@@ -402,6 +409,22 @@ const CVISettings = {
         if (!word) return false;
 
         var normalized = word.toLowerCase().trim();
+
+        // Always check blocked words first — these override everything
+        if (this.current.blockedWordList) {
+            var blockedWords = this.current.blockedWordList
+                .toLowerCase()
+                .split(',')
+                .map(function(w) { return w.trim(); })
+                .filter(function(w) { return w.length > 0; });
+
+            for (var b = 0; b < blockedWords.length; b++) {
+                if (normalized === blockedWords[b] ||
+                    normalized.indexOf(blockedWords[b]) !== -1) {
+                    return false;
+                }
+            }
+        }
 
         // If using custom word list only
         if (this.current.customWordListEnabled) {
