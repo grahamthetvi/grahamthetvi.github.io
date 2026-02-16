@@ -5,6 +5,7 @@
 const CVIApp = {
     async init() {
         // Initialize modules
+        CVISettings.init();
         CVIDisplay.init();
         CVIImages.init();
         await CVISpeech.init();

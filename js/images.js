@@ -27,6 +27,12 @@ const CVIImages = {
 
         var normalized = word.toLowerCase().trim();
 
+        // Check if word should show image based on settings
+        if (CVISettings && !CVISettings.shouldShowImage(normalized)) {
+            this._showTextOnly(normalized);
+            return;
+        }
+
         // Check cache first
         if (this.cache.has(normalized)) {
             var cached = this.cache.get(normalized);
