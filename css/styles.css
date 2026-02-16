@@ -214,6 +214,189 @@ body {
     outline-offset: 4px;
 }
 
+/* === Settings Panel === */
+.settings-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #333333;
+    color: #FFFFFF;
+    border: 2px solid #666666;
+    border-radius: 50%;
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 50;
+    transition: background-color 0.2s;
+}
+
+.settings-toggle:hover {
+    background-color: #444444;
+}
+
+.settings-toggle:focus {
+    outline: 3px solid #FFFF00;
+    outline-offset: 2px;
+}
+
+.settings-panel {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.95);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    overflow-y: auto;
+}
+
+.settings-panel.visible {
+    display: flex;
+}
+
+.settings-content {
+    background-color: #1a1a1a;
+    border: 2px solid #444444;
+    border-radius: 12px;
+    padding: 40px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.settings-content h2 {
+    font-size: 48px;
+    color: #FFFF00;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.settings-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #222222;
+    border-radius: 8px;
+}
+
+.settings-section h3 {
+    font-size: 28px;
+    color: #00FF00;
+    margin-bottom: 20px;
+}
+
+.setting-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 15px;
+}
+
+.setting-row.full-width {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.setting-row label {
+    font-size: 18px;
+    color: #FFFFFF;
+    min-width: 220px;
+}
+
+.setting-row.full-width label {
+    min-width: auto;
+    margin-bottom: 8px;
+}
+
+.setting-row select,
+.setting-row input[type="color"] {
+    font-size: 16px;
+    padding: 8px 12px;
+    background-color: #333333;
+    color: #FFFFFF;
+    border: 1px solid #666666;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.setting-row input[type="range"] {
+    flex: 1;
+    max-width: 300px;
+}
+
+.setting-row input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.setting-row textarea {
+    width: 100%;
+    padding: 12px;
+    background-color: #333333;
+    color: #FFFFFF;
+    border: 1px solid #666666;
+    border-radius: 4px;
+    font-size: 16px;
+    font-family: 'Arial', sans-serif;
+    resize: vertical;
+}
+
+.setting-row span {
+    font-size: 18px;
+    color: #FFFF00;
+    min-width: 80px;
+    font-weight: bold;
+}
+
+.settings-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.settings-button {
+    font-size: 20px;
+    padding: 12px 30px;
+    background-color: #333333;
+    color: #FFFFFF;
+    border: 2px solid #666666;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.settings-button:hover {
+    background-color: #444444;
+}
+
+.settings-button.primary {
+    background-color: #FFFF00;
+    color: #000000;
+    border-color: #FFFF00;
+}
+
+.settings-button.primary:hover {
+    background-color: #FFEE00;
+}
+
+.settings-button:focus {
+    outline: 3px solid #FFFFFF;
+    outline-offset: 2px;
+}
+
+/* === Bubble Letters Style === */
+.text-display.bubble-letters {
+    text-shadow:
+        -1px -1px 0 var(--bubble-color, #FFFF00),
+         1px -1px 0 var(--bubble-color, #FFFF00),
+        -1px  1px 0 var(--bubble-color, #FFFF00),
+         1px  1px 0 var(--bubble-color, #FFFF00);
+}
+
 /* === Responsive === */
 @media (max-width: 768px) {
     .app-container {
@@ -258,5 +441,35 @@ body {
 
     .status-bar {
         font-size: 18px;
+    }
+
+    .settings-content {
+        padding: 20px;
+        width: 95%;
+    }
+
+    .settings-content h2 {
+        font-size: 32px;
+    }
+
+    .settings-section h3 {
+        font-size: 22px;
+    }
+
+    .setting-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .setting-row label {
+        min-width: auto;
+    }
+
+    .settings-buttons {
+        flex-direction: column;
+    }
+
+    .settings-button {
+        width: 100%;
     }
 }

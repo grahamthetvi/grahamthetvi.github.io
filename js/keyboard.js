@@ -6,6 +6,7 @@ const CVIKeyboard = {
     lastKeyTime: 0,
     minInterval: 150,
     enabled: false,
+    keyPressHistory: [],
 
     /** Allowed single characters: letters and digits */
     _isAllowedChar: function(key) {
@@ -50,12 +51,30 @@ const CVIKeyboard = {
         // Ignore other modifier combos (let browser handle Ctrl+C, etc.)
         if (event.ctrlKey || event.metaKey || event.altKey) return;
 
-        // Rate limiting
+        // Get current settings
+        var settings = CVISettings ? CVISettings.getSettings() : null;
+        var minInterval = settings ? settings.typingInterval : this.minInterval;
+        var maxKeysPerSecond = settings ? settings.maxKeysPerSecond : 10;
+
+        // Rate limiting - minimum interval between keys
         var now = Date.now();
-        if (now - this.lastKeyTime < this.minInterval) {
+        if (now - this.lastKeyTime < minInterval) {
             event.preventDefault();
             return;
         }
+
+        // Max keys per second limiting
+        this.keyPressHistory.push(now);
+        // Keep only keys from the last second
+        this.keyPressHistory = this.keyPressHistory.filter(function(time) {
+            return now - time < 1000;
+        });
+
+        if (this.keyPressHistory.length > maxKeysPerSecond) {
+            event.preventDefault();
+            return;
+        }
+
         this.lastKeyTime = now;
 
         // Backspace
