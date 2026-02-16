@@ -116,6 +116,16 @@
                 </div>
             </section>
 
+            <!-- Image Display Settings -->
+            <section class="settings-section">
+                <h3>Image Display</h3>
+                <div class="setting-row">
+                    <label for="remove-background">Remove Image Background:</label>
+                    <input type="checkbox" id="remove-background">
+                </div>
+                <p class="setting-note" id="bg-removal-note">Uses AI to isolate the subject on a black background. Downloads a ~30MB model on first use (cached after).</p>
+            </section>
+
             <!-- Image Filter Settings -->
             <section class="settings-section">
                 <h3>Image Filtering</h3>
@@ -145,6 +155,7 @@
     <button id="settings-button" class="settings-toggle" aria-label="Open Settings">⚙️</button>
 
     <script src="js/speech.js"></script>
+    <script src="js/background-removal.js"></script>
     <script src="js/images.js"></script>
     <script src="js/settings.js"></script>
     <script src="js/display.js"></script>

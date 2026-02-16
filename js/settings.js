@@ -12,6 +12,7 @@ const CVISettings = {
         bubbleSize: 4,
         typingInterval: 150,
         maxKeysPerSecond: 10,
+        removeBackground: false,
         filterProfanity: true,
         customWordListEnabled: false,
         customWordList: ''
@@ -302,6 +303,9 @@ const CVISettings = {
         if (maxKeys) maxKeys.value = this.current.maxKeysPerSecond;
         if (maxKeysValue) maxKeysValue.textContent = this.current.maxKeysPerSecond;
 
+        var removeBackground = document.getElementById('remove-background');
+        if (removeBackground) removeBackground.checked = this.current.removeBackground;
+
         var filterProfanity = document.getElementById('filter-profanity');
         if (filterProfanity) filterProfanity.checked = this.current.filterProfanity;
 
@@ -339,6 +343,9 @@ const CVISettings = {
 
         var maxKeys = document.getElementById('max-keys-per-second');
         if (maxKeys) this.current.maxKeysPerSecond = parseInt(maxKeys.value);
+
+        var removeBackground = document.getElementById('remove-background');
+        if (removeBackground) this.current.removeBackground = removeBackground.checked;
 
         var filterProfanity = document.getElementById('filter-profanity');
         if (filterProfanity) this.current.filterProfanity = filterProfanity.checked;

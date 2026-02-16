@@ -388,6 +388,26 @@ body {
     outline-offset: 2px;
 }
 
+/* === Settings Note === */
+.setting-note {
+    font-size: 14px;
+    color: #999999;
+    margin-top: 5px;
+    padding: 0 4px;
+    line-height: 1.4;
+}
+
+/* === Image Processing State === */
+.word-image.processing {
+    opacity: 0.5;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.3; }
+}
+
 /* === Bubble Letters Style === */
 .text-display.bubble-letters {
     text-shadow:
