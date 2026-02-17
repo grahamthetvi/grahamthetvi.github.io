@@ -14,7 +14,7 @@ const CVISettings = {
         typingInterval: 150,
         maxKeysPerSecond: 10,
         removeBackground: false,
-        imageBubbleLettering: false,
+        imageBgColor: '#000000',
         filterProfanity: true,
         customWordListEnabled: false,
         customWordList: '',
@@ -312,8 +312,8 @@ const CVISettings = {
         var removeBackground = document.getElementById('remove-background');
         if (removeBackground) removeBackground.checked = this.current.removeBackground;
 
-        var imageBubbleLettering = document.getElementById('bubble-lettering');
-        if (imageBubbleLettering) imageBubbleLettering.checked = this.current.imageBubbleLettering;
+        var imageBgColor = document.getElementById('image-bg-color');
+        if (imageBgColor) imageBgColor.value = this.current.imageBgColor;
 
         var filterProfanity = document.getElementById('filter-profanity');
         if (filterProfanity) filterProfanity.checked = this.current.filterProfanity;
@@ -362,8 +362,8 @@ const CVISettings = {
         var removeBackground = document.getElementById('remove-background');
         if (removeBackground) this.current.removeBackground = removeBackground.checked;
 
-        var imageBubbleLettering = document.getElementById('bubble-lettering');
-        if (imageBubbleLettering) this.current.imageBubbleLettering = imageBubbleLettering.checked;
+        var imageBgColor = document.getElementById('image-bg-color');
+        if (imageBgColor) this.current.imageBgColor = imageBgColor.value;
 
         var filterProfanity = document.getElementById('filter-profanity');
         if (filterProfanity) this.current.filterProfanity = filterProfanity.checked;
@@ -416,6 +416,12 @@ const CVISettings = {
         // Apply typing interval to keyboard module
         if (CVIKeyboard) {
             CVIKeyboard.minInterval = this.current.typingInterval;
+        }
+
+        // Apply image panel background color
+        var imagePanel = document.getElementById('image-panel');
+        if (imagePanel) {
+            imagePanel.style.backgroundColor = this.current.imageBgColor;
         }
     },
 

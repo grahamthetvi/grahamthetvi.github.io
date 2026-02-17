@@ -79,11 +79,39 @@
                 </div>
                 <div class="setting-row">
                     <label for="font-color">Font Color:</label>
-                    <input type="color" id="font-color" value="#FFFFFF">
+                    <select id="font-color">
+                        <option value="#FFFFFF">White</option>
+                        <option value="#000000">Black</option>
+                        <option value="#FF0000">Red</option>
+                        <option value="#00FF00">Green</option>
+                        <option value="#0000FF">Blue</option>
+                        <option value="#FFFF00">Yellow</option>
+                        <option value="#FF00FF">Magenta</option>
+                        <option value="#00FFFF">Cyan</option>
+                        <option value="#FFA500">Orange</option>
+                        <option value="#800080">Purple</option>
+                        <option value="#FFC0CB">Pink</option>
+                        <option value="#A52A2A">Brown</option>
+                        <option value="#808080">Gray</option>
+                    </select>
                 </div>
                 <div class="setting-row">
                     <label for="background-color">Background Color:</label>
-                    <input type="color" id="background-color" value="#000000">
+                    <select id="background-color">
+                        <option value="#000000">Black</option>
+                        <option value="#FFFFFF">White</option>
+                        <option value="#FF0000">Red</option>
+                        <option value="#00FF00">Green</option>
+                        <option value="#0000FF">Blue</option>
+                        <option value="#FFFF00">Yellow</option>
+                        <option value="#FF00FF">Magenta</option>
+                        <option value="#00FFFF">Cyan</option>
+                        <option value="#FFA500">Orange</option>
+                        <option value="#800080">Purple</option>
+                        <option value="#FFC0CB">Pink</option>
+                        <option value="#A52A2A">Brown</option>
+                        <option value="#808080">Gray</option>
+                    </select>
                 </div>
             </section>
 
@@ -96,7 +124,21 @@
                 </div>
                 <div class="setting-row">
                     <label for="bubble-color">Bubble Color:</label>
-                    <input type="color" id="bubble-color" value="#FFFF00">
+                    <select id="bubble-color">
+                        <option value="#FFFF00">Yellow</option>
+                        <option value="#FFFFFF">White</option>
+                        <option value="#000000">Black</option>
+                        <option value="#FF0000">Red</option>
+                        <option value="#00FF00">Green</option>
+                        <option value="#0000FF">Blue</option>
+                        <option value="#FF00FF">Magenta</option>
+                        <option value="#00FFFF">Cyan</option>
+                        <option value="#FFA500">Orange</option>
+                        <option value="#800080">Purple</option>
+                        <option value="#FFC0CB">Pink</option>
+                        <option value="#A52A2A">Brown</option>
+                        <option value="#808080">Gray</option>
+                    </select>
                 </div>
                 <div class="setting-row">
                     <label for="bubble-size">Bubble Size:</label>
@@ -124,15 +166,28 @@
             <section class="settings-section">
                 <h3>Image Display</h3>
                 <div class="setting-row">
+                    <label for="image-bg-color">Image Panel Background Color:</label>
+                    <select id="image-bg-color">
+                        <option value="#000000">Black</option>
+                        <option value="#FFFFFF">White</option>
+                        <option value="#FF0000">Red</option>
+                        <option value="#00FF00">Green</option>
+                        <option value="#0000FF">Blue</option>
+                        <option value="#FFFF00">Yellow</option>
+                        <option value="#FF00FF">Magenta</option>
+                        <option value="#00FFFF">Cyan</option>
+                        <option value="#FFA500">Orange</option>
+                        <option value="#800080">Purple</option>
+                        <option value="#FFC0CB">Pink</option>
+                        <option value="#A52A2A">Brown</option>
+                        <option value="#808080">Gray</option>
+                    </select>
+                </div>
+                <div class="setting-row">
                     <label for="remove-background">Remove Image Background:</label>
                     <input type="checkbox" id="remove-background">
                 </div>
                 <p class="setting-note" id="bg-removal-note">Uses AI to isolate the subject on a transparent background. Downloads a ~30MB model on first use (cached after).</p>
-                <div class="setting-row">
-                    <label for="bubble-lettering">Bubble Lettering:</label>
-                    <input type="checkbox" id="bubble-lettering">
-                </div>
-                <p class="setting-note">Adds a bold outline effect to the text for a bubble letter appearance.</p>
             </section>
 
             <!-- Image Filter Settings -->
