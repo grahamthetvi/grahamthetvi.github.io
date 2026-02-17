@@ -104,7 +104,6 @@ var CVIBackgroundRemoval = {
         }
 
         var attributionEl = document.getElementById('image-attribution');
-        var self = this;
 
         try {
             // Show loading status
@@ -115,35 +114,15 @@ var CVIBackgroundRemoval = {
             var module = await this._loadLibrary();
 
             if (attributionEl) {
-                attributionEl.textContent = 'Preparing image...';
-            }
-
-            // Fetch and load the image
-            var response = await fetch(imageUrl);
-            var imageBlob = await response.blob();
-
-            // Create an image element to resize
-            var img = new Image();
-            img.crossOrigin = 'anonymous';
-            var imageLoaded = new Promise(function(resolve, reject) {
-                img.onload = function() { resolve(img); };
-                img.onerror = reject;
-            });
-            img.src = URL.createObjectURL(imageBlob);
-            await imageLoaded;
-
-            // Resize image to optimize processing speed
-            var canvas = this._resizeImage(img);
-            var resizedBlob = await new Promise(function(resolve) {
-                canvas.toBlob(resolve, 'image/png');
-            });
-
-            if (attributionEl) {
                 attributionEl.textContent = 'Removing background...';
             }
 
-            // Process the image with optimized settings
-            var resultBlob = await module.removeBackground(resizedBlob, {
+            // Fetch the image as a blob
+            var response = await fetch(imageUrl);
+            var imageBlob = await response.blob();
+
+            // Process the image
+            var resultBlob = await module.removeBackground(imageBlob, {
                 progress: function(key, current, total) {
                     if (attributionEl && key === 'compute:inference') {
                         var pct = Math.round((current / total) * 100);
@@ -164,7 +143,7 @@ var CVIBackgroundRemoval = {
         } catch (err) {
             console.error('Background removal error:', err);
             if (attributionEl) {
-                attributionEl.textContent = 'Image from Wikimedia Commons';
+                attributionEl.textContent = 'Background removal failed - Wikimedia Commons';
             }
             return imageUrl;
         }
