@@ -27,6 +27,12 @@ const CVIImages = {
 
         var normalized = word.toLowerCase().trim();
 
+        // Skip image loading for numbers
+        if (/^\d+$/.test(normalized)) {
+            this._showTextOnly(normalized);
+            return;
+        }
+
         // Check if word should show image based on settings
         if (CVISettings && !CVISettings.shouldShowImage(normalized)) {
             this._showTextOnly(normalized);
