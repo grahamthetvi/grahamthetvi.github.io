@@ -129,6 +129,18 @@ body {
     font-size: 32px;
 }
 
+/* Bubble lettering effect */
+.image-label.bubble-text {
+    -webkit-text-stroke: 4px #000000;
+    text-stroke: 4px #000000;
+    paint-order: stroke fill;
+}
+
+.image-label.bubble-text.has-image {
+    -webkit-text-stroke: 3px #003300;
+    text-stroke: 3px #003300;
+}
+
 .image-attribution {
     font-size: 12px;
     color: #666666;

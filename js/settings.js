@@ -14,6 +14,7 @@ const CVISettings = {
         typingInterval: 150,
         maxKeysPerSecond: 10,
         removeBackground: false,
+        imageBubbleLettering: false,
         filterProfanity: true,
         customWordListEnabled: false,
         customWordList: '',
@@ -311,6 +312,9 @@ const CVISettings = {
         var removeBackground = document.getElementById('remove-background');
         if (removeBackground) removeBackground.checked = this.current.removeBackground;
 
+        var imageBubbleLettering = document.getElementById('bubble-lettering');
+        if (imageBubbleLettering) imageBubbleLettering.checked = this.current.imageBubbleLettering;
+
         var filterProfanity = document.getElementById('filter-profanity');
         if (filterProfanity) filterProfanity.checked = this.current.filterProfanity;
 
@@ -357,6 +361,9 @@ const CVISettings = {
 
         var removeBackground = document.getElementById('remove-background');
         if (removeBackground) this.current.removeBackground = removeBackground.checked;
+
+        var imageBubbleLettering = document.getElementById('bubble-lettering');
+        if (imageBubbleLettering) this.current.imageBubbleLettering = imageBubbleLettering.checked;
 
         var filterProfanity = document.getElementById('filter-profanity');
         if (filterProfanity) this.current.filterProfanity = filterProfanity.checked;
