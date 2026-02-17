@@ -123,7 +123,7 @@ const CVIImages = {
         this.imageEl.alt = 'Photo of ' + word;
         this.imageEl.hidden = false;
         this.labelEl.textContent = word.toUpperCase();
-        this.labelEl.className = 'image-label has-image';
+        this.labelEl.className = 'image-label has-image' + this._getBubbleClass();
         this.attributionEl.textContent = 'Image from Wikimedia Commons';
 
         this.imageEl.onerror = function() {
@@ -155,7 +155,7 @@ const CVIImages = {
         this.imageEl.hidden = true;
         this.imageEl.src = '';
         this.labelEl.textContent = word.toUpperCase() + '...';
-        this.labelEl.className = 'image-label loading';
+        this.labelEl.className = 'image-label loading' + this._getBubbleClass();
         this.attributionEl.textContent = 'Searching for image...';
     },
 
@@ -166,7 +166,7 @@ const CVIImages = {
         this.imageEl.hidden = true;
         this.imageEl.src = '';
         this.labelEl.textContent = word.toUpperCase();
-        this.labelEl.className = 'image-label';
+        this.labelEl.className = 'image-label' + this._getBubbleClass();
         this.attributionEl.textContent = '';
     },
 
@@ -177,8 +177,18 @@ const CVIImages = {
         this.imageEl.hidden = true;
         this.imageEl.src = '';
         this.labelEl.textContent = 'Type a word!';
-        this.labelEl.className = 'image-label';
+        this.labelEl.className = 'image-label' + this._getBubbleClass();
         this.attributionEl.textContent = '';
+    },
+
+    /**
+     * Get bubble lettering class if enabled in settings.
+     */
+    _getBubbleClass() {
+        if (typeof CVISettings !== 'undefined' && CVISettings.current.imageBubbleLettering) {
+            return ' bubble-text';
+        }
+        return '';
     },
 
     /**
