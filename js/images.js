@@ -115,8 +115,10 @@ const CVIImages = {
 
     /**
      * Display an image with label and attribution.
+     * If background removal is enabled, processes the image after initial display.
      */
     _displayImage(src, word, title) {
+        var self = this;
         this.imageEl.src = src;
         this.imageEl.alt = 'Photo of ' + word;
         this.imageEl.hidden = false;
@@ -125,8 +127,25 @@ const CVIImages = {
         this.attributionEl.textContent = 'Image from Wikimedia Commons';
 
         this.imageEl.onerror = function() {
-            this._showTextOnly(word);
-        }.bind(this);
+            self._showTextOnly(word);
+        };
+
+        // Apply background removal if enabled
+        if (typeof CVIBackgroundRemoval !== 'undefined' && CVIBackgroundRemoval.isEnabled()) {
+            this.attributionEl.textContent = 'Preparing background removal...';
+            this.imageEl.classList.add('processing');
+
+            CVIBackgroundRemoval.processImage(src, word).then(function(processedUrl) {
+                // Only update if this image is still being displayed
+                if (self.imageEl.src === src || self.imageEl.src === processedUrl) {
+                    self.imageEl.src = processedUrl;
+                    self.imageEl.classList.remove('processing');
+                }
+            }).catch(function() {
+                self.imageEl.classList.remove('processing');
+                self.attributionEl.textContent = 'Image from Wikimedia Commons';
+            });
+        }
     },
 
     /**

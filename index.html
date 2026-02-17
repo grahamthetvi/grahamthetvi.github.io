@@ -74,12 +74,16 @@
                 </div>
                 <div class="setting-row">
                     <label for="font-size">Font Size:</label>
-                    <input type="range" id="font-size" min="20" max="120" value="60">
-                    <span id="font-size-value">60px</span>
+                    <input type="range" id="font-size" min="20" max="120" value="60" aria-describedby="font-size-value">
+                    <span id="font-size-value" aria-live="polite">60px</span>
                 </div>
                 <div class="setting-row">
                     <label for="font-color">Font Color:</label>
                     <input type="color" id="font-color" value="#FFFFFF">
+                </div>
+                <div class="setting-row">
+                    <label for="background-color">Background Color:</label>
+                    <input type="color" id="background-color" value="#000000">
                 </div>
             </section>
 
@@ -96,8 +100,8 @@
                 </div>
                 <div class="setting-row">
                     <label for="bubble-size">Bubble Size:</label>
-                    <input type="range" id="bubble-size" min="2" max="10" value="4">
-                    <span id="bubble-size-value">4px</span>
+                    <input type="range" id="bubble-size" min="2" max="10" value="4" aria-describedby="bubble-size-value">
+                    <span id="bubble-size-value" aria-live="polite">4px</span>
                 </div>
             </section>
 
@@ -106,14 +110,24 @@
                 <h3>Typing Control</h3>
                 <div class="setting-row">
                     <label for="typing-interval">Minimum Time Between Keys:</label>
-                    <input type="range" id="typing-interval" min="0" max="1000" step="50" value="150">
-                    <span id="typing-interval-value">150ms</span>
+                    <input type="range" id="typing-interval" min="0" max="1000" step="50" value="150" aria-describedby="typing-interval-value">
+                    <span id="typing-interval-value" aria-live="polite">150ms</span>
                 </div>
                 <div class="setting-row">
                     <label for="max-keys-per-second">Max Keys Per Second:</label>
-                    <input type="range" id="max-keys-per-second" min="1" max="20" value="10">
-                    <span id="max-keys-value">10</span>
+                    <input type="range" id="max-keys-per-second" min="1" max="20" value="10" aria-describedby="max-keys-value">
+                    <span id="max-keys-value" aria-live="polite">10</span>
                 </div>
+            </section>
+
+            <!-- Image Display Settings -->
+            <section class="settings-section">
+                <h3>Image Display</h3>
+                <div class="setting-row">
+                    <label for="remove-background">Remove Image Background:</label>
+                    <input type="checkbox" id="remove-background">
+                </div>
+                <p class="setting-note" id="bg-removal-note">Uses AI to isolate the subject on a black background. Downloads a ~30MB model on first use (cached after).</p>
             </section>
 
             <!-- Image Filter Settings -->
@@ -131,6 +145,11 @@
                     <label for="custom-word-list">Allowed Words (comma-separated):</label>
                     <textarea id="custom-word-list" rows="4" placeholder="cat, dog, tree, house, car..."></textarea>
                 </div>
+                <div class="setting-row full-width">
+                    <label for="blocked-word-list">Blocked Words (comma-separated):</label>
+                    <textarea id="blocked-word-list" rows="3" placeholder="Enter words that should never show images..."></textarea>
+                    <p class="setting-note">These words will never show images, regardless of other settings.</p>
+                </div>
             </section>
 
             <div class="settings-buttons">
@@ -145,6 +164,7 @@
     <button id="settings-button" class="settings-toggle" aria-label="Open Settings">⚙️</button>
 
     <script src="js/speech.js"></script>
+    <script src="js/background-removal.js"></script>
     <script src="js/images.js"></script>
     <script src="js/settings.js"></script>
     <script src="js/display.js"></script>
