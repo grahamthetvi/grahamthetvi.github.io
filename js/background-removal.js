@@ -142,10 +142,8 @@ var CVIBackgroundRemoval = {
                 attributionEl.textContent = 'Removing background...';
             }
 
-            // Process the image with WebGPU acceleration and optimized settings
+            // Process the image with optimized settings
             var resultBlob = await module.removeBackground(resizedBlob, {
-                model: 'small', // Use smaller, faster model
-                device: 'gpu',  // Enable GPU/WebGPU acceleration
                 progress: function(key, current, total) {
                     if (attributionEl && key === 'compute:inference') {
                         var pct = Math.round((current / total) * 100);
