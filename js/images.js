@@ -143,6 +143,8 @@ const CVIImages = {
                 if (self.imageEl.src === src || self.imageEl.src === processedUrl) {
                     self.imageEl.src = processedUrl;
                     self.imageEl.classList.remove('processing');
+                    // Reapply outline after background removal completes
+                    self._applyImageOutline();
                 }
             }).catch(function() {
                 self.imageEl.classList.remove('processing');
