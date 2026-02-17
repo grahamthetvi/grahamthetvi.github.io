@@ -14,7 +14,9 @@ const CVISettings = {
         typingInterval: 150,
         maxKeysPerSecond: 10,
         removeBackground: false,
-        imageBubbleLettering: false,
+        imageOutlineEnabled: false,
+        imageOutlineColor: '#FFFF00',
+        imageOutlineSize: 4,
         filterProfanity: true,
         customWordListEnabled: false,
         customWordList: '',
@@ -312,8 +314,16 @@ const CVISettings = {
         var removeBackground = document.getElementById('remove-background');
         if (removeBackground) removeBackground.checked = this.current.removeBackground;
 
-        var imageBubbleLettering = document.getElementById('bubble-lettering');
-        if (imageBubbleLettering) imageBubbleLettering.checked = this.current.imageBubbleLettering;
+        var imageOutlineEnabled = document.getElementById('image-outline-enabled');
+        if (imageOutlineEnabled) imageOutlineEnabled.checked = this.current.imageOutlineEnabled;
+
+        var imageOutlineColor = document.getElementById('image-outline-color');
+        if (imageOutlineColor) imageOutlineColor.value = this.current.imageOutlineColor;
+
+        var imageOutlineSize = document.getElementById('image-outline-size');
+        var imageOutlineSizeValue = document.getElementById('image-outline-size-value');
+        if (imageOutlineSize) imageOutlineSize.value = this.current.imageOutlineSize;
+        if (imageOutlineSizeValue) imageOutlineSizeValue.textContent = this.current.imageOutlineSize;
 
         var filterProfanity = document.getElementById('filter-profanity');
         if (filterProfanity) filterProfanity.checked = this.current.filterProfanity;
@@ -362,8 +372,14 @@ const CVISettings = {
         var removeBackground = document.getElementById('remove-background');
         if (removeBackground) this.current.removeBackground = removeBackground.checked;
 
-        var imageBubbleLettering = document.getElementById('bubble-lettering');
-        if (imageBubbleLettering) this.current.imageBubbleLettering = imageBubbleLettering.checked;
+        var imageOutlineEnabled = document.getElementById('image-outline-enabled');
+        if (imageOutlineEnabled) this.current.imageOutlineEnabled = imageOutlineEnabled.checked;
+
+        var imageOutlineColor = document.getElementById('image-outline-color');
+        if (imageOutlineColor) this.current.imageOutlineColor = imageOutlineColor.value;
+
+        var imageOutlineSize = document.getElementById('image-outline-size');
+        if (imageOutlineSize) this.current.imageOutlineSize = parseInt(imageOutlineSize.value);
 
         var filterProfanity = document.getElementById('filter-profanity');
         if (filterProfanity) this.current.filterProfanity = filterProfanity.checked;

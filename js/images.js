@@ -123,8 +123,11 @@ const CVIImages = {
         this.imageEl.alt = 'Photo of ' + word;
         this.imageEl.hidden = false;
         this.labelEl.textContent = word.toUpperCase();
-        this.labelEl.className = 'image-label has-image' + this._getBubbleClass();
+        this.labelEl.className = 'image-label has-image';
         this.attributionEl.textContent = 'Image from Wikimedia Commons';
+
+        // Apply image outline if enabled
+        this._applyImageOutline();
 
         this.imageEl.onerror = function() {
             self._showTextOnly(word);
@@ -155,7 +158,7 @@ const CVIImages = {
         this.imageEl.hidden = true;
         this.imageEl.src = '';
         this.labelEl.textContent = word.toUpperCase() + '...';
-        this.labelEl.className = 'image-label loading' + this._getBubbleClass();
+        this.labelEl.className = 'image-label loading';
         this.attributionEl.textContent = 'Searching for image...';
     },
 
@@ -166,7 +169,7 @@ const CVIImages = {
         this.imageEl.hidden = true;
         this.imageEl.src = '';
         this.labelEl.textContent = word.toUpperCase();
-        this.labelEl.className = 'image-label' + this._getBubbleClass();
+        this.labelEl.className = 'image-label';
         this.attributionEl.textContent = '';
     },
 
@@ -177,18 +180,21 @@ const CVIImages = {
         this.imageEl.hidden = true;
         this.imageEl.src = '';
         this.labelEl.textContent = 'Type a word!';
-        this.labelEl.className = 'image-label' + this._getBubbleClass();
+        this.labelEl.className = 'image-label';
         this.attributionEl.textContent = '';
     },
 
     /**
-     * Get bubble lettering class if enabled in settings.
+     * Apply outline to image if enabled in settings.
      */
-    _getBubbleClass() {
-        if (typeof CVISettings !== 'undefined' && CVISettings.current.imageBubbleLettering) {
-            return ' bubble-text';
+    _applyImageOutline() {
+        if (typeof CVISettings !== 'undefined' && CVISettings.current.imageOutlineEnabled) {
+            var color = CVISettings.current.imageOutlineColor || '#FFFF00';
+            var size = CVISettings.current.imageOutlineSize || 4;
+            this.imageEl.style.border = size + 'px solid ' + color;
+        } else {
+            this.imageEl.style.border = '3px solid #FFFFFF';
         }
-        return '';
     },
 
     /**
