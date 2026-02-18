@@ -28,7 +28,11 @@
         <!-- Right panel: image display -->
         <aside id="image-panel" class="image-panel" aria-live="polite">
             <div id="image-container" class="image-container">
-                <img id="word-image" src="" alt="" class="word-image" hidden>
+                <div class="image-nav-row">
+                    <button id="image-prev-btn" class="image-nav-btn" aria-label="Previous image" style="display:none">&#8592;</button>
+                    <img id="word-image" src="" alt="" class="word-image" hidden>
+                    <button id="image-next-btn" class="image-nav-btn" aria-label="Next image" style="display:none">&#8594;</button>
+                </div>
                 <p id="image-label" class="image-label">Type a word!</p>
                 <p id="image-attribution" class="image-attribution" aria-hidden="true"></p>
             </div>
@@ -48,6 +52,8 @@
             <p>Type letters to hear them spoken aloud.</p>
             <p>Press <strong>Space</strong> or <strong>Enter</strong> to hear the whole word and see a picture.</p>
             <p>Press <strong>Backspace</strong> to delete a letter.</p>
+            <p>Press <strong>Ctrl+Shift+W</strong> to toggle words-per-minute display.</p>
+            <p>Press <strong>Ctrl+Shift+L</strong> to toggle letters-per-minute display.</p>
             <button id="start-button" class="start-button" autofocus>
                 Start Typing
             </button>
@@ -211,6 +217,45 @@
                     <label for="blocked-word-list">Blocked Words (comma-separated):</label>
                     <textarea id="blocked-word-list" rows="3" placeholder="Enter words that should never show images..."></textarea>
                     <p class="setting-note">These words will never show images, regardless of other settings.</p>
+                </div>
+            </section>
+
+            <!-- Image Navigation Arrow Settings -->
+            <section class="settings-section">
+                <h3>Image Navigation Arrows</h3>
+                <p class="setting-note">Arrows let you flip between multiple photos of the same word.</p>
+                <div class="setting-row">
+                    <label for="arrows-enabled">Show Navigation Arrows:</label>
+                    <input type="checkbox" id="arrows-enabled" checked>
+                </div>
+                <div class="setting-row">
+                    <label for="arrow-color">Arrow Color:</label>
+                    <select id="arrow-color">
+                        <option value="#FFFF00">Yellow</option>
+                        <option value="#FFFFFF">White</option>
+                        <option value="#00FF00">Green</option>
+                        <option value="#00FFFF">Cyan</option>
+                        <option value="#FF0000">Red</option>
+                        <option value="#FF00FF">Magenta</option>
+                        <option value="#FFA500">Orange</option>
+                        <option value="#0000FF">Blue</option>
+                        <option value="#800080">Purple</option>
+                        <option value="#FFC0CB">Pink</option>
+                        <option value="#A52A2A">Brown</option>
+                        <option value="#808080">Gray</option>
+                        <option value="#000000">Black</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Session Word History -->
+            <section class="settings-section">
+                <h3>Session Word History</h3>
+                <p class="setting-note">All words typed this session, in order. This list is preserved here even if the student clears the screen.</p>
+                <div class="setting-row full-width">
+                    <textarea id="session-word-history" rows="8" readonly
+                              placeholder="No words typed yet this session."
+                              style="font-family: monospace; font-size: 14px;"></textarea>
                 </div>
             </section>
 

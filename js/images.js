@@ -1,18 +1,96 @@
 /**
  * CVI Type Talker - Image Module
  * Fetches images from Wikimedia Commons API for typed words.
+ * Supports multi-image navigation and real-word validation.
  */
 const CVIImages = {
     imageEl: null,
     labelEl: null,
     attributionEl: null,
+    prevBtn: null,
+    nextBtn: null,
+
+    // Cache: word -> array of { url, title }
     cache: new Map(),
+    // Dictionary validation cache: word -> boolean
+    _wordValidCache: new Map(),
+
     _currentRequest: 0,
+
+    // Current word's photo list and index
+    _currentPhotos: [],
+    _currentPhotoIndex: 0,
+    _currentWord: '',
 
     init() {
         this.imageEl = document.getElementById('word-image');
         this.labelEl = document.getElementById('image-label');
         this.attributionEl = document.getElementById('image-attribution');
+        this.prevBtn = document.getElementById('image-prev-btn');
+        this.nextBtn = document.getElementById('image-next-btn');
+
+        var self = this;
+        if (this.prevBtn) {
+            this.prevBtn.addEventListener('click', function() {
+                self.showPrevPhoto();
+            });
+        }
+        if (this.nextBtn) {
+            this.nextBtn.addEventListener('click', function() {
+                self.showNextPhoto();
+            });
+        }
+    },
+
+    /**
+     * Navigate to the previous photo for the current word.
+     */
+    showPrevPhoto() {
+        if (this._currentPhotos.length <= 1) return;
+        this._currentPhotoIndex = (this._currentPhotoIndex - 1 + this._currentPhotos.length) % this._currentPhotos.length;
+        var photo = this._currentPhotos[this._currentPhotoIndex];
+        this._displayImage(photo.url, this._currentWord, photo.title);
+        this._updateArrows();
+    },
+
+    /**
+     * Navigate to the next photo for the current word.
+     */
+    showNextPhoto() {
+        if (this._currentPhotos.length <= 1) return;
+        this._currentPhotoIndex = (this._currentPhotoIndex + 1) % this._currentPhotos.length;
+        var photo = this._currentPhotos[this._currentPhotoIndex];
+        this._displayImage(photo.url, this._currentWord, photo.title);
+        this._updateArrows();
+    },
+
+    /**
+     * Show/hide arrow buttons based on photo count and settings.
+     */
+    _updateArrows() {
+        var settings = CVISettings ? CVISettings.getSettings() : null;
+        var arrowsEnabled = settings ? settings.arrowsEnabled : true;
+        var arrowColor = settings ? settings.arrowColor : '#FFFF00';
+        var hasMultiple = this._currentPhotos.length > 1;
+
+        if (this.prevBtn) {
+            this.prevBtn.style.display = (arrowsEnabled && hasMultiple) ? 'flex' : 'none';
+            this.prevBtn.style.color = arrowColor;
+            this.prevBtn.style.borderColor = arrowColor;
+        }
+        if (this.nextBtn) {
+            this.nextBtn.style.display = (arrowsEnabled && hasMultiple) ? 'flex' : 'none';
+            this.nextBtn.style.color = arrowColor;
+            this.nextBtn.style.borderColor = arrowColor;
+        }
+    },
+
+    /**
+     * Hide arrows (called when no image shown or during loading).
+     */
+    _hideArrows() {
+        if (this.prevBtn) this.prevBtn.style.display = 'none';
+        if (this.nextBtn) this.nextBtn.style.display = 'none';
     },
 
     /**
@@ -27,23 +105,38 @@ const CVIImages = {
 
         var normalized = word.toLowerCase().trim();
 
-        // Skip image loading for numbers
-        if (/^\d+$/.test(normalized)) {
+        // Skip image loading for single letters
+        if (normalized.length === 1) {
             this._showTextOnly(normalized);
             return;
         }
 
-        // Check if word should show image based on settings
+        // Check if word should show image based on settings (profanity/block lists)
         if (CVISettings && !CVISettings.shouldShowImage(normalized)) {
             this._showTextOnly(normalized);
             return;
         }
 
+        // Validate that the word is real (unless custom word list is in use)
+        var settings = CVISettings ? CVISettings.getSettings() : null;
+        var skipValidation = settings && settings.customWordListEnabled;
+        if (!skipValidation) {
+            var isReal = await this._isRealWord(normalized);
+            if (!isReal) {
+                this._showNonsenseWord(normalized);
+                return;
+            }
+        }
+
         // Check cache first
         if (this.cache.has(normalized)) {
             var cached = this.cache.get(normalized);
-            if (cached) {
-                this._displayImage(cached.url, normalized, cached.title);
+            if (cached && cached.length > 0) {
+                this._currentPhotos = cached;
+                this._currentPhotoIndex = 0;
+                this._currentWord = normalized;
+                this._displayImage(cached[0].url, normalized, cached[0].title);
+                this._updateArrows();
             } else {
                 this._showTextOnly(normalized);
             }
@@ -52,33 +145,67 @@ const CVIImages = {
 
         // Show loading state
         this._showLoading(normalized);
+        this._hideArrows();
 
         // Track request to handle race conditions
         var requestId = ++this._currentRequest;
 
         try {
-            var result = await this._fetchFromWikimedia(normalized);
+            var results = await this._fetchFromWikimedia(normalized);
 
             // Only update if this is still the latest request
             if (requestId !== this._currentRequest) return;
 
-            if (result) {
-                this.cache.set(normalized, result);
-                this._displayImage(result.url, normalized, result.title);
+            if (results && results.length > 0) {
+                this.cache.set(normalized, results);
+                this._currentPhotos = results;
+                this._currentPhotoIndex = 0;
+                this._currentWord = normalized;
+                this._displayImage(results[0].url, normalized, results[0].title);
+                this._updateArrows();
             } else {
-                this.cache.set(normalized, null);
+                this.cache.set(normalized, []);
                 this._showTextOnly(normalized);
             }
         } catch (err) {
             if (requestId !== this._currentRequest) return;
-            this.cache.set(normalized, null);
+            this.cache.set(normalized, []);
             this._showTextOnly(normalized);
         }
     },
 
     /**
-     * Query Wikimedia Commons for an image matching the word.
-     * Returns { url, title } or null.
+     * Check if a word exists in the English dictionary via free API.
+     * Results are cached for the session.
+     */
+    async _isRealWord(word) {
+        if (this._wordValidCache.has(word)) {
+            return this._wordValidCache.get(word);
+        }
+
+        // Single letters are handled before this call; just in case
+        if (word.length === 1) {
+            this._wordValidCache.set(word, false);
+            return false;
+        }
+
+        try {
+            var response = await fetch(
+                'https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word)
+            );
+            var isReal = response.ok; // 200 = found, 404 = not found
+            this._wordValidCache.set(word, isReal);
+            return isReal;
+        } catch (err) {
+            // Network error — allow word through so connectivity issues don't block the student
+            this._wordValidCache.set(word, true);
+            return true;
+        }
+    },
+
+    /**
+     * Query Wikimedia Commons for images matching the word.
+     * Returns an array of { url, title } objects (up to 10).
      */
     async _fetchFromWikimedia(word) {
         var url = 'https://commons.wikimedia.org/w/api.php'
@@ -96,7 +223,7 @@ const CVIImages = {
         var response = await fetch(url);
         var data = await response.json();
 
-        if (!data.query || !data.query.pages) return null;
+        if (!data.query || !data.query.pages) return [];
 
         var pages = Object.values(data.query.pages);
 
@@ -108,15 +235,14 @@ const CVIImages = {
                    photoMimes.indexOf(p.imageinfo[0].mime) !== -1;
         });
 
-        if (photos.length === 0) return null;
+        if (photos.length === 0) return [];
 
-        // Pick the first suitable photo
-        var best = photos[0];
-        var info = best.imageinfo[0];
-        var thumbUrl = info.thumburl || info.url;
-        var title = best.title ? best.title.replace('File:', '').replace(/\.[^.]+$/, '') : word;
-
-        return { url: thumbUrl, title: title };
+        return photos.map(function(p) {
+            var info = p.imageinfo[0];
+            var thumbUrl = info.thumburl || info.url;
+            var title = p.title ? p.title.replace('File:', '').replace(/\.[^.]+$/, '') : word;
+            return { url: thumbUrl, title: title };
+        });
     },
 
     /**
@@ -130,7 +256,15 @@ const CVIImages = {
         this.imageEl.hidden = false;
         this.labelEl.textContent = word.toUpperCase();
         this.labelEl.className = 'image-label has-image';
-        this.attributionEl.textContent = 'Image from Wikimedia Commons';
+
+        // Show photo index if multiple available
+        if (this._currentPhotos.length > 1) {
+            this.attributionEl.textContent =
+                'Image ' + (this._currentPhotoIndex + 1) + ' of ' + this._currentPhotos.length +
+                ' — Wikimedia Commons';
+        } else {
+            this.attributionEl.textContent = 'Image from Wikimedia Commons';
+        }
 
         this.imageEl.onerror = function() {
             self._showTextOnly(word);
@@ -142,16 +276,20 @@ const CVIImages = {
             this.imageEl.classList.add('processing');
 
             CVIBackgroundRemoval.processImage(src, word).then(function(processedUrl) {
-                // Only update if this image is still being displayed
                 if (self.imageEl.src === src || self.imageEl.src === processedUrl) {
                     self.imageEl.src = processedUrl;
                     self.imageEl.classList.remove('processing');
-                    // Reapply outline after background removal completes
-                    self._applyImageOutline();
+                    self._applyImageOutline && self._applyImageOutline();
                 }
             }).catch(function() {
                 self.imageEl.classList.remove('processing');
-                self.attributionEl.textContent = 'Image from Wikimedia Commons';
+                if (self._currentPhotos.length > 1) {
+                    self.attributionEl.textContent =
+                        'Image ' + (self._currentPhotoIndex + 1) + ' of ' + self._currentPhotos.length +
+                        ' — Wikimedia Commons';
+                } else {
+                    self.attributionEl.textContent = 'Image from Wikimedia Commons';
+                }
             });
         }
     },
@@ -165,6 +303,8 @@ const CVIImages = {
         this.labelEl.textContent = word.toUpperCase() + '...';
         this.labelEl.className = 'image-label loading';
         this.attributionEl.textContent = 'Searching for image...';
+        this._currentPhotos = [];
+        this._currentWord = '';
     },
 
     /**
@@ -176,6 +316,23 @@ const CVIImages = {
         this.labelEl.textContent = word.toUpperCase();
         this.labelEl.className = 'image-label';
         this.attributionEl.textContent = '';
+        this._currentPhotos = [];
+        this._currentWord = '';
+        this._hideArrows();
+    },
+
+    /**
+     * Show word as text with a note that it wasn't found in the dictionary.
+     */
+    _showNonsenseWord(word) {
+        this.imageEl.hidden = true;
+        this.imageEl.src = '';
+        this.labelEl.textContent = word.toUpperCase();
+        this.labelEl.className = 'image-label';
+        this.attributionEl.textContent = 'Not a real word — no image shown';
+        this._currentPhotos = [];
+        this._currentWord = '';
+        this._hideArrows();
     },
 
     /**
@@ -187,6 +344,9 @@ const CVIImages = {
         this.labelEl.textContent = 'Type a word!';
         this.labelEl.className = 'image-label';
         this.attributionEl.textContent = '';
+        this._currentPhotos = [];
+        this._currentWord = '';
+        this._hideArrows();
     },
 
     /**

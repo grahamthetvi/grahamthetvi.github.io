@@ -9,11 +9,15 @@ const CVIDisplay = {
     currentText: '',
     maxVisibleLines: 5,
 
+    // Session word history — persists for the lifetime of the page session
+    sessionWordHistory: [],
+
     init() {
         this.displayEl = document.getElementById('text-display');
         this.statusTextEl = document.getElementById('status-text');
         this.lines = [];
         this.currentText = '';
+        this.sessionWordHistory = [];
         this._render();
     },
 
@@ -46,14 +50,21 @@ const CVIDisplay = {
     },
 
     /**
-     * Handle space: add space to text and return the just-completed word.
+     * Handle space: add a single space (ignore if already ends with space).
+     * Returns the just-completed word, or null if already trailing a space.
      */
     handleSpace() {
+        // Collapse multiple spaces — if currentText already ends with a space, ignore
+        if (this.currentText.endsWith(' ')) {
+            return null;
+        }
+
         const word = this.getCurrentWord();
         this.currentText += ' ';
         this._render();
         if (word) {
             this._updateStatus('You typed: ' + word.toUpperCase());
+            this._recordWord(word);
         }
         return word;
     },
@@ -68,10 +79,31 @@ const CVIDisplay = {
         this._render();
         if (lastWord) {
             this._updateStatus('You typed: ' + lastWord.toUpperCase());
+            this._recordWord(lastWord);
         } else {
             this._updateStatus('New line');
         }
         return lastWord;
+    },
+
+    /**
+     * Record a word into the session history.
+     */
+    _recordWord(word) {
+        if (!word || !word.trim()) return;
+        var normalized = word.toLowerCase().trim();
+        if (normalized.length === 0) return;
+        this.sessionWordHistory.push({
+            word: normalized,
+            timestamp: new Date().toLocaleTimeString()
+        });
+    },
+
+    /**
+     * Get the full session word history array.
+     */
+    getWordHistory() {
+        return this.sessionWordHistory;
     },
 
     /**

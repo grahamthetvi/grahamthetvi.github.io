@@ -104,12 +104,65 @@ body {
     text-align: center;
 }
 
+/* Image navigation row — arrows flank the photo */
+.image-nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.image-nav-btn {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    background: transparent;
+    color: #FFFF00;
+    border: 3px solid #FFFF00;
+    border-radius: 50%;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s, transform 0.1s;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.image-nav-btn:hover {
+    background-color: rgba(255, 255, 0, 0.15);
+    transform: scale(1.1);
+}
+
+.image-nav-btn:focus {
+    outline: 3px solid #FFFFFF;
+    outline-offset: 3px;
+}
+
+.image-nav-btn:active {
+    transform: scale(0.95);
+}
+
 .word-image {
+    flex: 1;
+    min-width: 0;
     max-width: 100%;
     max-height: 55vh;
     object-fit: contain;
     border: 3px solid #FFFFFF;
     border-radius: 8px;
+}
+
+/* Read-only session history textarea */
+#session-word-history {
+    background-color: #111111;
+    color: #00FF00;
+    border-color: #444444;
+    cursor: default;
+    resize: vertical;
 }
 
 .image-label {

@@ -8,9 +8,15 @@ const CVIKeyboard = {
     enabled: false,
     keyPressHistory: [],
 
-    /** Allowed single characters: letters and digits */
+    // Typing speed tracking
+    sessionStartTime: null,
+    letterCount: 0,
+    wordCount: 0,
+    speedDisplayMode: null, // null | 'wpm' | 'lpm'
+
+    /** Allowed single characters: letters only (no digits) */
     _isAllowedChar: function(key) {
-        return (key.length === 1 && /[a-zA-Z0-9]/.test(key));
+        return (key.length === 1 && /[a-zA-Z]/.test(key));
     },
 
     init() {
@@ -19,10 +25,54 @@ const CVIKeyboard = {
 
     enable() {
         this.enabled = true;
+        if (!this.sessionStartTime) {
+            this.sessionStartTime = Date.now();
+        }
     },
 
     disable() {
         this.enabled = false;
+    },
+
+    /**
+     * Record a completed word for WPM tracking.
+     * Called by display.js when a word is committed.
+     */
+    recordWord() {
+        this.wordCount++;
+    },
+
+    /**
+     * Get current WPM based on elapsed session time.
+     */
+    getWPM() {
+        if (!this.sessionStartTime || this.wordCount === 0) return 0;
+        var elapsedMinutes = (Date.now() - this.sessionStartTime) / 60000;
+        if (elapsedMinutes < 0.001) return 0;
+        return Math.round(this.wordCount / elapsedMinutes);
+    },
+
+    /**
+     * Get current LPM based on elapsed session time.
+     */
+    getLPM() {
+        if (!this.sessionStartTime || this.letterCount === 0) return 0;
+        var elapsedMinutes = (Date.now() - this.sessionStartTime) / 60000;
+        if (elapsedMinutes < 0.001) return 0;
+        return Math.round(this.letterCount / elapsedMinutes);
+    },
+
+    /**
+     * Show typing speed in the status bar.
+     */
+    _showSpeed() {
+        if (this.speedDisplayMode === 'wpm') {
+            var wpm = this.getWPM();
+            CVIDisplay._updateStatus('Words per minute: ' + wpm + ' WPM  |  Press Ctrl+Shift+W to hide');
+        } else if (this.speedDisplayMode === 'lpm') {
+            var lpm = this.getLPM();
+            CVIDisplay._updateStatus('Letters per minute: ' + lpm + ' LPM  |  Press Ctrl+Shift+L to hide');
+        }
     },
 
     _handleKeyDown(event) {
@@ -45,6 +95,32 @@ const CVIKeyboard = {
             CVIDisplay.clear();
             CVIImages.hideImage();
             CVISpeech.speakSystem('screen cleared');
+            return;
+        }
+
+        // Ctrl+Shift+W: toggle WPM display
+        if (event.ctrlKey && event.shiftKey && (key === 'W' || key === 'w')) {
+            event.preventDefault();
+            if (this.speedDisplayMode === 'wpm') {
+                this.speedDisplayMode = null;
+                CVIDisplay._updateStatus('Type a letter to begin');
+            } else {
+                this.speedDisplayMode = 'wpm';
+                this._showSpeed();
+            }
+            return;
+        }
+
+        // Ctrl+Shift+L: toggle LPM display
+        if (event.ctrlKey && event.shiftKey && (key === 'L' || key === 'l')) {
+            event.preventDefault();
+            if (this.speedDisplayMode === 'lpm') {
+                this.speedDisplayMode = null;
+                CVIDisplay._updateStatus('Type a letter to begin');
+            } else {
+                this.speedDisplayMode = 'lpm';
+                this._showSpeed();
+            }
             return;
         }
 
@@ -94,6 +170,8 @@ const CVIKeyboard = {
             if (word) {
                 CVISpeech.speakWord(word);
                 CVIImages.showImage(word);
+                this.recordWord();
+                if (this.speedDisplayMode) this._showSpeed();
             } else {
                 CVISpeech.speakSystem('new line');
             }
@@ -107,18 +185,22 @@ const CVIKeyboard = {
             if (completedWord) {
                 CVISpeech.speakWord(completedWord);
                 CVIImages.showImage(completedWord);
+                this.recordWord();
+                if (this.speedDisplayMode) this._showSpeed();
             }
             return;
         }
 
-        // Letters and numbers
+        // Letters only (no digits)
         if (this._isAllowedChar(key)) {
             event.preventDefault();
+            this.letterCount++;
             CVIDisplay.addCharacter(key);
             CVISpeech.speakLetter(key);
+            if (this.speedDisplayMode) this._showSpeed();
             return;
         }
 
-        // All other keys: ignore (Tab, arrows, F-keys, etc.)
+        // All other keys: ignore (Tab, arrows, F-keys, digits, etc.)
     }
 };
