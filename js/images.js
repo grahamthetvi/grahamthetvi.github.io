@@ -117,18 +117,9 @@ const CVIImages = {
             return;
         }
 
-        // Validate that the word is real (unless custom word list is in use)
-        var settings = CVISettings ? CVISettings.getSettings() : null;
-        var skipValidation = settings && settings.customWordListEnabled;
-        if (!skipValidation) {
-            var isReal = await this._isRealWord(normalized);
-            if (!isReal) {
-                this._showNonsenseWord(normalized);
-                return;
-            }
-        }
-
-        // Check cache first
+        // ── Cache check FIRST ────────────────────────────────────────────────
+        // If the word was pre-loaded (or previously typed), show it immediately
+        // without any network round-trips.
         if (this.cache.has(normalized)) {
             var cached = this.cache.get(normalized);
             if (cached && cached.length > 0) {
@@ -141,6 +132,17 @@ const CVIImages = {
                 this._showTextOnly(normalized);
             }
             return;
+        }
+
+        // ── Dictionary validation (only for words not yet in cache) ──────────
+        var settings = CVISettings ? CVISettings.getSettings() : null;
+        var skipValidation = settings && settings.customWordListEnabled;
+        if (!skipValidation) {
+            var isReal = await this._isRealWord(normalized);
+            if (!isReal) {
+                this._showNonsenseWord(normalized);
+                return;
+            }
         }
 
         // Show loading state
@@ -406,12 +408,14 @@ const CVIImages = {
                 var results = await self._fetchFromWikimedia(word);
                 if (results && results.length > 0) {
                     self.cache.set(word, results);
+                    // Mark as a known-real word so showImage() skips the dictionary API call
+                    self._wordValidCache.set(word, true);
 
-                    // If background removal is on, process the first photo now
-                    // so it's cached in CVIBackgroundRemoval when the child types the word
+                    // If background removal is on, process the first photo now silently
+                    // (silent=true suppresses any visible attribution updates)
                     if (bgRemovalEnabled) {
                         try {
-                            await CVIBackgroundRemoval.processImage(results[0].url, word);
+                            await CVIBackgroundRemoval.processImage(results[0].url, word, true);
                         } catch (e) {
                             // Background removal failed — original image will still show instantly
                         }

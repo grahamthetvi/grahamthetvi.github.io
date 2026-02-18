@@ -93,20 +93,27 @@ var CVIBackgroundRemoval = {
      * Shows progress via the attribution element.
      * Returns the processed blob URL, or the original URL on failure.
      */
-    processImage: async function(imageUrl, word) {
+    /**
+     * @param {string} imageUrl  - URL of the image to process
+     * @param {string} word      - Word label (used for context)
+     * @param {boolean} [silent] - When true, suppress all attribution element updates
+     *                             (used during background pre-loading so the student
+     *                             never sees "Removing background…" flicker mid-session)
+     */
+    processImage: async function(imageUrl, word, silent) {
         if (!this.isEnabled()) {
             return imageUrl;
         }
 
-        // Check cache first
+        // Check cache first — return instantly if already processed
         if (this._processedCache.has(imageUrl)) {
             return this._processedCache.get(imageUrl);
         }
 
-        var attributionEl = document.getElementById('image-attribution');
+        // Only look up the live DOM element when we're allowed to write to it
+        var attributionEl = silent ? null : document.getElementById('image-attribution');
 
         try {
-            // Show loading status
             if (attributionEl) {
                 attributionEl.textContent = 'Loading background removal model...';
             }
