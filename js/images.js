@@ -134,11 +134,18 @@ const CVIImages = {
             return;
         }
 
+        // ── Track request to handle race conditions ───────────────────────────
+        // Increment here (before any async work) so that an in-flight fetch for a
+        // previous word cannot overwrite the display when this word turns out to be
+        // nonsensical — it will see a mismatched requestId and bail out.
+        var requestId = ++this._currentRequest;
+
         // ── Dictionary validation (only for words not yet in cache) ──────────
         var settings = CVISettings ? CVISettings.getSettings() : null;
         var skipValidation = settings && settings.customWordListEnabled;
         if (!skipValidation) {
             var isReal = await this._isRealWord(normalized);
+            if (requestId !== this._currentRequest) return;
             if (!isReal) {
                 this._showNonsenseWord(normalized);
                 return;
@@ -148,9 +155,6 @@ const CVIImages = {
         // Show loading state
         this._showLoading(normalized);
         this._hideArrows();
-
-        // Track request to handle race conditions
-        var requestId = ++this._currentRequest;
 
         try {
             var results = await this._fetchFromWikimedia(normalized);

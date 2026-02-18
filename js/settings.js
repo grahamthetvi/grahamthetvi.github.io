@@ -5,7 +5,7 @@
 const CVISettings = {
     defaults: {
         fontFamily: 'Arial, sans-serif',
-        fontSize: 60,
+        fontSize: 80,
         fontColor: '#000000',
         backgroundColor: '#000000',
         bubbleLettersEnabled: true,

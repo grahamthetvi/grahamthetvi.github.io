@@ -56,7 +56,7 @@ body {
 
 .text-display {
     width: 100%;
-    font-size: 60px;
+    font-size: 80px;
     font-weight: bold;
     font-family: 'Arial', sans-serif;
     line-height: 1.3;
@@ -175,7 +175,7 @@ body {
 }
 
 .image-label {
-    font-size: 48px;
+    font-size: 64px;
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 4px;
@@ -499,7 +499,7 @@ body {
     }
 
     .text-display {
-        font-size: 36px;
+        font-size: 48px;
     }
 
     .typing-panel {
@@ -513,7 +513,7 @@ body {
     }
 
     .image-label {
-        font-size: 32px;
+        font-size: 42px;
     }
 
     .word-image {
