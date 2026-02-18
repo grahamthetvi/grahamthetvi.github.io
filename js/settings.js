@@ -18,7 +18,9 @@ const CVISettings = {
         filterProfanity: true,
         customWordListEnabled: false,
         customWordList: '',
-        blockedWordList: ''
+        blockedWordList: '',
+        arrowsEnabled: true,
+        arrowColor: '#FFFF00'
     },
 
     current: {},
@@ -326,6 +328,15 @@ const CVISettings = {
 
         var blockedList = document.getElementById('blocked-word-list');
         if (blockedList) blockedList.value = this.current.blockedWordList;
+
+        var arrowsEnabled = document.getElementById('arrows-enabled');
+        if (arrowsEnabled) arrowsEnabled.checked = this.current.arrowsEnabled;
+
+        var arrowColor = document.getElementById('arrow-color');
+        if (arrowColor) arrowColor.value = this.current.arrowColor;
+
+        // Populate session word history
+        this._populateWordHistory();
     },
 
     /**
@@ -376,6 +387,12 @@ const CVISettings = {
 
         var blockedList = document.getElementById('blocked-word-list');
         if (blockedList) this.current.blockedWordList = blockedList.value;
+
+        var arrowsEnabled = document.getElementById('arrows-enabled');
+        if (arrowsEnabled) this.current.arrowsEnabled = arrowsEnabled.checked;
+
+        var arrowColor = document.getElementById('arrow-color');
+        if (arrowColor) this.current.arrowColor = arrowColor.value;
     },
 
     /**
@@ -422,6 +439,11 @@ const CVISettings = {
         var imagePanel = document.getElementById('image-panel');
         if (imagePanel) {
             imagePanel.style.backgroundColor = this.current.imageBgColor;
+        }
+
+        // Apply arrow settings — refresh arrow state if images module is live
+        if (typeof CVIImages !== 'undefined') {
+            CVIImages._updateArrows();
         }
     },
 
@@ -471,6 +493,25 @@ const CVISettings = {
         }
 
         return true;
+    },
+
+    /**
+     * Populate the session word history display inside the settings panel.
+     */
+    _populateWordHistory() {
+        var historyEl = document.getElementById('session-word-history');
+        if (!historyEl) return;
+
+        var history = CVIDisplay ? CVIDisplay.getWordHistory() : [];
+        if (!history || history.length === 0) {
+            historyEl.textContent = 'No words typed yet this session.';
+            return;
+        }
+
+        // Build a chronological list: "time — word"
+        historyEl.textContent = history.map(function(entry) {
+            return entry.timestamp + '  —  ' + entry.word.toUpperCase();
+        }).join('\n');
     },
 
     /**
