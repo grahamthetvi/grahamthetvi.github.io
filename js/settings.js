@@ -6,10 +6,10 @@ const CVISettings = {
     defaults: {
         fontFamily: 'Arial, sans-serif',
         fontSize: 60,
-        fontColor: '#FFFFFF',
+        fontColor: '#000000',
         backgroundColor: '#000000',
-        bubbleLettersEnabled: false,
-        bubbleColor: '#FFFF00',
+        bubbleLettersEnabled: true,
+        bubbleColor: '#FF0000',
         bubbleSize: 4,
         typingInterval: 150,
         maxKeysPerSecond: 10,
