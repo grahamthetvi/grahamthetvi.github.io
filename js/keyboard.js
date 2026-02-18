@@ -68,7 +68,7 @@ const CVIKeyboard = {
     _showSpeed() {
         if (this.speedDisplayMode === 'wpm') {
             var wpm = this.getWPM();
-            CVIDisplay._updateStatus('Words per minute: ' + wpm + ' WPM  |  Press Ctrl+Shift+W to hide');
+            CVIDisplay._updateStatus('Words per minute: ' + wpm + ' WPM  |  Press Ctrl+Shift+M to hide');
         } else if (this.speedDisplayMode === 'lpm') {
             var lpm = this.getLPM();
             CVIDisplay._updateStatus('Letters per minute: ' + lpm + ' LPM  |  Press Ctrl+Shift+L to hide');
@@ -98,8 +98,8 @@ const CVIKeyboard = {
             return;
         }
 
-        // Ctrl+Shift+W: toggle WPM display
-        if (event.ctrlKey && event.shiftKey && (key === 'W' || key === 'w')) {
+        // Ctrl+Shift+M: toggle WPM display
+        if (event.ctrlKey && event.shiftKey && (key === 'M' || key === 'm')) {
             event.preventDefault();
             if (this.speedDisplayMode === 'wpm') {
                 this.speedDisplayMode = null;

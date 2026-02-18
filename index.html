@@ -52,7 +52,7 @@
             <p>Type letters to hear them spoken aloud.</p>
             <p>Press <strong>Space</strong> or <strong>Enter</strong> to hear the whole word and see a picture.</p>
             <p>Press <strong>Backspace</strong> to delete a letter.</p>
-            <p>Press <strong>Ctrl+Shift+W</strong> to toggle words-per-minute display.</p>
+            <p>Press <strong>Ctrl+Shift+M</strong> to toggle words-per-minute display.</p>
             <p>Press <strong>Ctrl+Shift+L</strong> to toggle letters-per-minute display.</p>
             <button id="start-button" class="start-button" autofocus>
                 Start Typing
@@ -196,6 +196,12 @@
                     <input type="checkbox" id="remove-background">
                 </div>
                 <p class="setting-note" id="bg-removal-note">Uses AI to isolate the subject on a transparent background. Downloads a ~30MB model on first use (cached after).</p>
+                <div class="setting-row full-width" style="margin-top: 16px;">
+                    <label for="preload-words">Pre-load Images for These Words:</label>
+                    <textarea id="preload-words" rows="4" placeholder="cat, dog, tree, house, ball, bus..."></textarea>
+                    <p class="setting-note">Images for these words will be fetched (and background-removed, if enabled) as soon as the session starts — so they appear instantly when the child types them. Separate words with commas.</p>
+                </div>
+                <div id="preload-status" class="preload-status" aria-live="polite"></div>
             </section>
 
             <!-- Image Filter Settings -->
