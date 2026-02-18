@@ -350,6 +350,92 @@ const CVIImages = {
     },
 
     /**
+     * Pre-load images (and optionally background-remove) for a comma-separated
+     * word list. Runs silently in the background so the child sees instant results.
+     * Requests are staggered 350ms apart to avoid hammering the API.
+     */
+    async preloadWords(wordListStr) {
+        if (!wordListStr || !wordListStr.trim()) return;
+
+        var self = this;
+        var words = wordListStr
+            .split(',')
+            .map(function(w) { return w.trim().toLowerCase(); })
+            .filter(function(w) {
+                // Skip blanks and single characters
+                return w.length > 1;
+            });
+
+        // Remove duplicates
+        var seen = {};
+        words = words.filter(function(w) {
+            if (seen[w]) return false;
+            seen[w] = true;
+            return true;
+        });
+
+        if (words.length === 0) return;
+
+        var statusEl = document.getElementById('preload-status');
+        var bgRemovalEnabled = typeof CVIBackgroundRemoval !== 'undefined' && CVIBackgroundRemoval.isEnabled();
+        var loaded = 0;
+        var total = words.length;
+
+        function updateStatus(msg) {
+            if (statusEl) statusEl.textContent = msg;
+        }
+
+        updateStatus('Pre-loading ' + total + ' word' + (total !== 1 ? 's' : '') + '…');
+
+        for (var i = 0; i < words.length; i++) {
+            var word = words[i];
+
+            // Skip if already cached
+            if (self.cache.has(word)) {
+                loaded++;
+                updateStatus('Pre-loaded ' + loaded + ' / ' + total);
+                continue;
+            }
+
+            // Stagger requests — wait before each fetch (except the first)
+            if (i > 0) {
+                await new Promise(function(resolve) { setTimeout(resolve, 350); });
+            }
+
+            try {
+                var results = await self._fetchFromWikimedia(word);
+                if (results && results.length > 0) {
+                    self.cache.set(word, results);
+
+                    // If background removal is on, process the first photo now
+                    // so it's cached in CVIBackgroundRemoval when the child types the word
+                    if (bgRemovalEnabled) {
+                        try {
+                            await CVIBackgroundRemoval.processImage(results[0].url, word);
+                        } catch (e) {
+                            // Background removal failed — original image will still show instantly
+                        }
+                    }
+                } else {
+                    self.cache.set(word, []);
+                }
+            } catch (e) {
+                // Network error for this word — skip silently
+            }
+
+            loaded++;
+            updateStatus('Pre-loaded ' + loaded + ' / ' + total);
+        }
+
+        updateStatus('✓ All ' + total + ' word' + (total !== 1 ? 's' : '') + ' pre-loaded');
+
+        // Clear the message after a few seconds
+        setTimeout(function() {
+            if (statusEl) statusEl.textContent = '';
+        }, 4000);
+    },
+
+    /**
      * Hide image panel content entirely.
      */
     hideImage() {

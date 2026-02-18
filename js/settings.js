@@ -20,7 +20,8 @@ const CVISettings = {
         customWordList: '',
         blockedWordList: '',
         arrowsEnabled: true,
-        arrowColor: '#FFFF00'
+        arrowColor: '#FFFF00',
+        preloadWords: ''
     },
 
     current: {},
@@ -335,6 +336,9 @@ const CVISettings = {
         var arrowColor = document.getElementById('arrow-color');
         if (arrowColor) arrowColor.value = this.current.arrowColor;
 
+        var preloadWords = document.getElementById('preload-words');
+        if (preloadWords) preloadWords.value = this.current.preloadWords;
+
         // Populate session word history
         this._populateWordHistory();
     },
@@ -393,6 +397,9 @@ const CVISettings = {
 
         var arrowColor = document.getElementById('arrow-color');
         if (arrowColor) this.current.arrowColor = arrowColor.value;
+
+        var preloadWords = document.getElementById('preload-words');
+        if (preloadWords) this.current.preloadWords = preloadWords.value;
     },
 
     /**
@@ -444,6 +451,11 @@ const CVISettings = {
         // Apply arrow settings — refresh arrow state if images module is live
         if (typeof CVIImages !== 'undefined') {
             CVIImages._updateArrows();
+        }
+
+        // Re-run pre-loading whenever settings are saved, in case the word list changed
+        if (typeof CVIImages !== 'undefined' && this.current.preloadWords) {
+            CVIImages.preloadWords(this.current.preloadWords);
         }
     },
 

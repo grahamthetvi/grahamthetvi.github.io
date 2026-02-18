@@ -11,6 +11,15 @@ const CVIApp = {
         await CVISpeech.init();
         CVIKeyboard.init();
 
+        // Start pre-loading images in the background immediately.
+        // Uses a short delay so the browser can finish rendering first.
+        var preloadList = CVISettings.getSettings().preloadWords;
+        if (preloadList) {
+            setTimeout(function() {
+                CVIImages.preloadWords(preloadList);
+            }, 800);
+        }
+
         // Warn if TTS is not supported
         if (!CVISpeech.isSupported()) {
             document.getElementById('status-text').textContent =
