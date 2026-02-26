@@ -271,6 +271,16 @@ body {
     color: #FFFF00;
 }
 
+.keyboard-notice {
+    font-size: 22px;
+    color: #FFAA00;
+    border: 2px solid #FFAA00;
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 .start-button {
     font-size: 36px;
     padding: 20px 60px;
