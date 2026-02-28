@@ -1,52 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="CVI Type Talker - An accessible typing application for students with Cortical Visual Impairment. Type words to hear them spoken and see real images.">
+    <meta name="description"
+        content="CVI Type Talker - An accessible typing application for students with Cortical Visual Impairment. Type words to hear them spoken and see real images.">
     <meta name="theme-color" content="#000000">
     <title>CVI Type Talker</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <script src="coi-serviceworker.js"></script>
     <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
     <a href="#typing-area" class="skip-link">Skip to typing area</a>
- 
+
     <main id="app" class="app-container" role="application"
-          aria-label="CVI Type Talker - Type words to hear them spoken and see images">
- 
+        aria-label="CVI Type Talker - Type words to hear them spoken and see images">
+
         <!-- Left panel: typing display -->
         <section id="typing-area" class="typing-panel">
-            <div id="text-display" class="text-display" role="textbox"
-                 aria-multiline="true" aria-label="Typed text display" tabindex="0">
+            <div id="text-display" class="text-display" role="textbox" aria-multiline="true"
+                aria-label="Typed text display" tabindex="0">
                 <span id="current-line" class="current-line"></span>
                 <span class="cursor" aria-hidden="true">|</span>
             </div>
         </section>
- 
+
         <!-- Right panel: image display -->
         <aside id="image-panel" class="image-panel" aria-live="polite">
             <div id="image-container" class="image-container">
                 <div class="image-nav-row">
-                    <button id="image-prev-btn" class="image-nav-btn" aria-label="Previous image" style="display:none">&#8592;</button>
+                    <button id="image-prev-btn" class="image-nav-btn" aria-label="Previous image"
+                        style="display:none">&#8592;</button>
                     <img id="word-image" src="" alt="" class="word-image" crossorigin="anonymous" hidden>
-                    <button id="image-next-btn" class="image-nav-btn" aria-label="Next image" style="display:none">&#8594;</button>
+                    <button id="image-next-btn" class="image-nav-btn" aria-label="Next image"
+                        style="display:none">&#8594;</button>
                 </div>
                 <p id="image-label" class="image-label">Type a word!</p>
                 <p id="image-attribution" class="image-attribution" aria-hidden="true"></p>
             </div>
         </aside>
     </main>
- 
+
     <!-- Status bar -->
     <footer id="status-bar" class="status-bar" role="status" aria-live="polite">
         <p id="status-text">Type a letter to begin</p>
     </footer>
- 
+
     <!-- Instructions overlay -->
-    <div id="instructions-overlay" class="overlay" role="dialog"
-         aria-labelledby="instructions-title" aria-modal="true">
+    <div id="instructions-overlay" class="overlay" role="dialog" aria-labelledby="instructions-title" aria-modal="true">
         <div class="overlay-content">
             <h1 id="instructions-title">CVI Type Talker</h1>
             <p>Type letters to hear them spoken aloud.</p>
@@ -150,7 +154,8 @@
                 </div>
                 <div class="setting-row">
                     <label for="bubble-size">Bubble Size:</label>
-                    <input type="range" id="bubble-size" min="2" max="10" value="4" aria-describedby="bubble-size-value">
+                    <input type="range" id="bubble-size" min="2" max="10" value="4"
+                        aria-describedby="bubble-size-value">
                     <span id="bubble-size-value" aria-live="polite">4px</span>
                 </div>
             </section>
@@ -160,12 +165,14 @@
                 <h3>Typing Control</h3>
                 <div class="setting-row">
                     <label for="typing-interval">Minimum Time Between Keys:</label>
-                    <input type="range" id="typing-interval" min="0" max="1000" step="50" value="150" aria-describedby="typing-interval-value">
+                    <input type="range" id="typing-interval" min="0" max="1000" step="50" value="150"
+                        aria-describedby="typing-interval-value">
                     <span id="typing-interval-value" aria-live="polite">150ms</span>
                 </div>
                 <div class="setting-row">
                     <label for="max-keys-per-second">Max Keys Per Second:</label>
-                    <input type="range" id="max-keys-per-second" min="1" max="20" value="10" aria-describedby="max-keys-value">
+                    <input type="range" id="max-keys-per-second" min="1" max="20" value="10"
+                        aria-describedby="max-keys-value">
                     <span id="max-keys-value" aria-live="polite">10</span>
                 </div>
             </section>
@@ -175,12 +182,14 @@
                 <h3>Image Display</h3>
                 <div class="setting-row">
                     <label for="image-size">Image Size:</label>
-                    <input type="range" id="image-size" min="20" max="90" value="55" aria-describedby="image-size-value">
+                    <input type="range" id="image-size" min="20" max="90" value="55"
+                        aria-describedby="image-size-value">
                     <span id="image-size-value" aria-live="polite">55vh</span>
                 </div>
                 <div class="setting-row">
                     <label for="image-label-size">Image Word Size:</label>
-                    <input type="range" id="image-label-size" min="20" max="120" value="48" aria-describedby="image-label-size-value">
+                    <input type="range" id="image-label-size" min="20" max="120" value="48"
+                        aria-describedby="image-label-size-value">
                     <span id="image-label-size-value" aria-live="polite">48px</span>
                 </div>
                 <div class="setting-row">
@@ -205,11 +214,14 @@
                     <label for="remove-background">Remove Image Background:</label>
                     <input type="checkbox" id="remove-background">
                 </div>
-                <p class="setting-note" id="bg-removal-note">Uses AI to isolate the subject on a transparent background. Downloads a ~30MB model on first use (cached after).</p>
+                <p class="setting-note" id="bg-removal-note">Uses AI to isolate the subject on a transparent background.
+                    Downloads a ~30MB model on first use (cached after).</p>
                 <div class="setting-row full-width" style="margin-top: 16px;">
                     <label for="preload-words">Pre-load Images for These Words:</label>
                     <textarea id="preload-words" rows="4" placeholder="cat, dog, tree, house, ball, bus..."></textarea>
-                    <p class="setting-note">Images for these words will be fetched (and background-removed, if enabled) as soon as the session starts — so they appear instantly when the child types them. Separate words with commas.</p>
+                    <p class="setting-note">Images for these words will be fetched (and background-removed, if enabled)
+                        as soon as the session starts — so they appear instantly when the child types them. Separate
+                        words with commas.</p>
                 </div>
                 <div id="preload-status" class="preload-status" aria-live="polite"></div>
             </section>
@@ -231,7 +243,8 @@
                 </div>
                 <div class="setting-row full-width">
                     <label for="blocked-word-list">Blocked Words (comma-separated):</label>
-                    <textarea id="blocked-word-list" rows="3" placeholder="Enter words that should never show images..."></textarea>
+                    <textarea id="blocked-word-list" rows="3"
+                        placeholder="Enter words that should never show images..."></textarea>
                     <p class="setting-note">These words will never show images, regardless of other settings.</p>
                 </div>
             </section>
@@ -267,11 +280,11 @@
             <!-- Session Word History -->
             <section class="settings-section">
                 <h3>Session Word History</h3>
-                <p class="setting-note">All words typed this session, in order. This list is preserved here even if the student clears the screen.</p>
+                <p class="setting-note">All words typed this session, in order. This list is preserved here even if the
+                    student clears the screen.</p>
                 <div class="setting-row full-width">
-                    <textarea id="session-word-history" rows="8" readonly
-                              placeholder="No words typed yet this session."
-                              style="font-family: monospace; font-size: 14px;"></textarea>
+                    <textarea id="session-word-history" rows="8" readonly placeholder="No words typed yet this session."
+                        style="font-family: monospace; font-size: 14px;"></textarea>
                 </div>
             </section>
 
@@ -288,10 +301,12 @@
 
     <script src="js/speech.js"></script>
     <script src="js/background-removal.js"></script>
+    <script src="js/badwords.js"></script>
     <script src="js/images.js"></script>
     <script src="js/settings.js"></script>
     <script src="js/display.js"></script>
     <script src="js/keyboard.js"></script>
     <script src="js/app.js"></script>
 </body>
+
 </html>

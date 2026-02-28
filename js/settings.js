@@ -30,11 +30,8 @@ const CVISettings = {
     previousFocus: null,
     focusableElements: [],
 
-    // Common profanity words to filter
-    profanityList: [
-        'damn', 'hell', 'crap', 'shit', 'fuck', 'bitch', 'ass', 'bastard',
-        'piss', 'cock', 'dick', 'pussy', 'whore', 'slut', 'fag', 'nigger'
-    ],
+    // Common profanity words to filter - now handled by CVIBadWords in badwords.js
+    profanityList: [],
 
     init() {
         this.loadSettings();
@@ -84,14 +81,14 @@ const CVISettings = {
 
         // Open settings panel
         if (settingsBtn) {
-            settingsBtn.addEventListener('click', function() {
+            settingsBtn.addEventListener('click', function () {
                 self.openPanel();
             });
         }
 
         // Save settings
         if (saveBtn) {
-            saveBtn.addEventListener('click', function() {
+            saveBtn.addEventListener('click', function () {
                 self.readFromUI();
                 self.saveSettings();
                 self.applySettings();
@@ -101,7 +98,7 @@ const CVISettings = {
 
         // Cancel
         if (cancelBtn) {
-            cancelBtn.addEventListener('click', function() {
+            cancelBtn.addEventListener('click', function () {
                 self.closePanel();
                 self.populateUI(); // Reset UI to saved values
             });
@@ -109,7 +106,7 @@ const CVISettings = {
 
         // Reset to defaults
         if (resetBtn) {
-            resetBtn.addEventListener('click', function() {
+            resetBtn.addEventListener('click', function () {
                 if (confirm('Reset all settings to defaults?')) {
                     self.current = Object.assign({}, self.defaults);
                     self.saveSettings();
@@ -123,7 +120,7 @@ const CVISettings = {
         var fontSize = document.getElementById('font-size');
         var fontSizeValue = document.getElementById('font-size-value');
         if (fontSize && fontSizeValue) {
-            fontSize.addEventListener('input', function() {
+            fontSize.addEventListener('input', function () {
                 fontSizeValue.textContent = this.value + 'px';
             });
         }
@@ -131,7 +128,7 @@ const CVISettings = {
         var bubbleSize = document.getElementById('bubble-size');
         var bubbleSizeValue = document.getElementById('bubble-size-value');
         if (bubbleSize && bubbleSizeValue) {
-            bubbleSize.addEventListener('input', function() {
+            bubbleSize.addEventListener('input', function () {
                 bubbleSizeValue.textContent = this.value + 'px';
             });
         }
@@ -139,7 +136,7 @@ const CVISettings = {
         var typingInterval = document.getElementById('typing-interval');
         var typingIntervalValue = document.getElementById('typing-interval-value');
         if (typingInterval && typingIntervalValue) {
-            typingInterval.addEventListener('input', function() {
+            typingInterval.addEventListener('input', function () {
                 typingIntervalValue.textContent = this.value + 'ms';
             });
         }
@@ -147,7 +144,7 @@ const CVISettings = {
         var maxKeys = document.getElementById('max-keys-per-second');
         var maxKeysValue = document.getElementById('max-keys-value');
         if (maxKeys && maxKeysValue) {
-            maxKeys.addEventListener('input', function() {
+            maxKeys.addEventListener('input', function () {
                 maxKeysValue.textContent = this.value;
             });
         }
@@ -155,7 +152,7 @@ const CVISettings = {
         var imageSize = document.getElementById('image-size');
         var imageSizeValue = document.getElementById('image-size-value');
         if (imageSize && imageSizeValue) {
-            imageSize.addEventListener('input', function() {
+            imageSize.addEventListener('input', function () {
                 imageSizeValue.textContent = this.value + 'vh';
             });
         }
@@ -163,13 +160,13 @@ const CVISettings = {
         var imageLabelSize = document.getElementById('image-label-size');
         var imageLabelSizeValue = document.getElementById('image-label-size-value');
         if (imageLabelSize && imageLabelSizeValue) {
-            imageLabelSize.addEventListener('input', function() {
+            imageLabelSize.addEventListener('input', function () {
                 imageLabelSizeValue.textContent = this.value + 'px';
             });
         }
 
         // Close on Escape key
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape' && panel && panel.classList.contains('visible')) {
                 self.closePanel();
                 self.populateUI(); // Reset UI to saved values
@@ -518,8 +515,8 @@ const CVISettings = {
             var blockedWords = this.current.blockedWordList
                 .toLowerCase()
                 .split(',')
-                .map(function(w) { return w.trim(); })
-                .filter(function(w) { return w.length > 0; });
+                .map(function (w) { return w.trim(); })
+                .filter(function (w) { return w.length > 0; });
 
             for (var b = 0; b < blockedWords.length; b++) {
                 if (normalized === blockedWords[b] ||
@@ -534,19 +531,16 @@ const CVISettings = {
             var allowedWords = this.current.customWordList
                 .toLowerCase()
                 .split(',')
-                .map(function(w) { return w.trim(); })
-                .filter(function(w) { return w.length > 0; });
+                .map(function (w) { return w.trim(); })
+                .filter(function (w) { return w.length > 0; });
 
             return allowedWords.indexOf(normalized) !== -1;
         }
 
         // If filtering profanity
-        if (this.current.filterProfanity) {
-            for (var i = 0; i < this.profanityList.length; i++) {
-                if (normalized === this.profanityList[i] ||
-                    normalized.indexOf(this.profanityList[i]) !== -1) {
-                    return false;
-                }
+        if (this.current.filterProfanity && typeof CVIBadWords !== 'undefined') {
+            if (CVIBadWords.check(normalized)) {
+                return false;
             }
         }
 
@@ -567,7 +561,7 @@ const CVISettings = {
         }
 
         // Build a chronological list: "time — word"
-        historyEl.textContent = history.map(function(entry) {
+        historyEl.textContent = history.map(function (entry) {
             return entry.timestamp + '  —  ' + entry.word.toUpperCase();
         }).join('\n');
     },
