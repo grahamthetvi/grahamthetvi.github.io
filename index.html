@@ -49,8 +49,25 @@
         <p id="status-text">Type a letter to begin</p>
     </footer>
 
+    <!-- Consent Modal -->
+    <div id="consent-overlay" class="overlay" role="dialog" aria-labelledby="consent-title" aria-modal="true">
+        <div class="overlay-content">
+            <h1 id="consent-title">Adult Content & Profanity Warning</h1>
+            <p>We, the creators of this website, have taken all reasonable steps to stop inappropriate images from being
+                displayed when inappropriate words are typed.</p>
+            <p>However, we cannot guarantee that every possible inappropriate image will be blocked and are <strong>not
+                    responsible</strong> if one is displayed.</p>
+            <p>If additional filtering is required, there is a Profanity Filtering option in the settings that you can
+                use.</p>
+            <button id="consent-accept-btn" class="start-button" autofocus>
+                I Understand
+            </button>
+        </div>
+    </div>
+
     <!-- Instructions overlay -->
-    <div id="instructions-overlay" class="overlay" role="dialog" aria-labelledby="instructions-title" aria-modal="true">
+    <div id="instructions-overlay" class="overlay hidden" role="dialog" aria-labelledby="instructions-title"
+        aria-modal="true">
         <div class="overlay-content">
             <h1 id="instructions-title">CVI Type Talker</h1>
             <p>Type letters to hear them spoken aloud.</p>
@@ -60,16 +77,17 @@
             <p>Press <strong>Ctrl+Shift+M</strong> to show words-per-minute speed.</p>
             <p>Press <strong>Ctrl+Shift+L</strong> to show letters-per-minute speed.</p>
             <p>Press <strong>Ctrl+Shift+C</strong> to clear the screen.</p>
-            <p class="keyboard-notice">⌨️ This app requires a <strong>physical keyboard</strong>. It will not work on a touchscreen without one connected.</p>
-            <button id="start-button" class="start-button" autofocus>
+            <p class="keyboard-notice">⌨️ This app requires a <strong>physical keyboard</strong>. It will not work on a
+                touchscreen without one connected.</p>
+            <button id="start-button" class="start-button">
                 Start Typing
             </button>
         </div>
     </div>
 
     <!-- Settings Guide (shown once, first time settings are opened) -->
-    <div id="settings-guide-modal" class="settings-guide-overlay" role="dialog"
-         aria-labelledby="guide-title" aria-modal="true" hidden>
+    <div id="settings-guide-modal" class="settings-guide-overlay" role="dialog" aria-labelledby="guide-title"
+        aria-modal="true" hidden>
         <div class="settings-guide-content">
 
             <!-- Scrollable section list -->
@@ -87,27 +105,33 @@
                 </div>
                 <div class="guide-section">
                     <h3>⏱ Typing Control</h3>
-                    <p>Set a minimum delay between key presses — helpful for students who press keys accidentally or too quickly.</p>
+                    <p>Set a minimum delay between key presses — helpful for students who press keys accidentally or too
+                        quickly.</p>
                 </div>
                 <div class="guide-section">
                     <h3>🖼 Image Display</h3>
-                    <p>Control how large the picture appears. Pre-load images for specific words so they show instantly when typed.</p>
+                    <p>Control how large the picture appears. Pre-load images for specific words so they show instantly
+                        when typed.</p>
                 </div>
                 <div class="guide-section">
                     <h3>🚫 Image Filtering</h3>
-                    <p>Block certain words from ever showing a picture, or restrict the app to an approved word list only.</p>
+                    <p>Block certain words from ever showing a picture, or restrict the app to an approved word list
+                        only.</p>
                 </div>
                 <div class="guide-section">
                     <h3>← → Image Navigation Arrows</h3>
-                    <p>Show or hide the on-screen arrow buttons for flipping through multiple photos. The keyboard arrow keys always work too.</p>
+                    <p>Show or hide the on-screen arrow buttons for flipping through multiple photos. The keyboard arrow
+                        keys always work too.</p>
                 </div>
                 <div class="guide-section">
                     <h3>🖱 Mouse Cursor</h3>
-                    <p>Change the cursor style — useful if a student is using a mouse to click the navigation arrows.</p>
+                    <p>Change the cursor style — useful if a student is using a mouse to click the navigation arrows.
+                    </p>
                 </div>
                 <div class="guide-section">
                     <h3>📋 Session Word History</h3>
-                    <p>A running log of every word typed this session with timestamps — useful for teachers reviewing progress.</p>
+                    <p>A running log of every word typed this session with timestamps — useful for teachers reviewing
+                        progress.</p>
                 </div>
             </div>
 
@@ -308,7 +332,8 @@
             <!-- Image Navigation Arrow Settings -->
             <section class="settings-section">
                 <h3>Image Navigation Arrows</h3>
-                <p class="setting-note">Arrows let you flip between multiple photos of the same word. You can also use the ← → arrow keys on the keyboard.</p>
+                <p class="setting-note">Arrows let you flip between multiple photos of the same word. You can also use
+                    the ← → arrow keys on the keyboard.</p>
                 <div class="setting-row">
                     <label for="arrows-enabled">Show Navigation Arrows:</label>
                     <input type="checkbox" id="arrows-enabled" checked>
@@ -333,7 +358,8 @@
                 </div>
                 <div class="setting-row">
                     <label for="arrow-size">Arrow Button Size:</label>
-                    <input type="range" id="arrow-size" min="32" max="120" value="56" aria-describedby="arrow-size-value">
+                    <input type="range" id="arrow-size" min="32" max="120" value="56"
+                        aria-describedby="arrow-size-value">
                     <span id="arrow-size-value" aria-live="polite">56px</span>
                 </div>
             </section>
@@ -341,7 +367,9 @@
             <!-- Mouse Cursor Settings -->
             <section class="settings-section">
                 <h3>Mouse Cursor</h3>
-                <p class="setting-note">Change the mouse cursor style. A large pointer can help children identify where to click to flip through pictures. Note: browsers limit cursor customization — for flipping pictures, the keyboard arrow keys (← →) always work regardless of cursor style.</p>
+                <p class="setting-note">Change the mouse cursor style. A large pointer can help children identify where
+                    to click to flip through pictures. Note: browsers limit cursor customization — for flipping
+                    pictures, the keyboard arrow keys (← →) always work regardless of cursor style.</p>
                 <div class="setting-row">
                     <label for="cursor-style">Cursor Style:</label>
                     <select id="cursor-style">
@@ -373,13 +401,15 @@
     </div>
 
     <!-- Image Lightbox -->
-    <div id="image-lightbox" class="image-lightbox hidden" role="dialog"
-         aria-label="Expanded image view" aria-modal="true">
+    <div id="image-lightbox" class="image-lightbox hidden" role="dialog" aria-label="Expanded image view"
+        aria-modal="true">
         <button id="lightbox-close" class="lightbox-close" aria-label="Close expanded image">&#x2715;</button>
         <div class="lightbox-inner">
-            <button id="lightbox-prev" class="lightbox-nav-btn" aria-label="Previous image" style="display:none">&#8592;</button>
+            <button id="lightbox-prev" class="lightbox-nav-btn" aria-label="Previous image"
+                style="display:none">&#8592;</button>
             <img id="lightbox-image" class="lightbox-image" src="" alt="" crossorigin="anonymous">
-            <button id="lightbox-next" class="lightbox-nav-btn" aria-label="Next image" style="display:none">&#8594;</button>
+            <button id="lightbox-next" class="lightbox-nav-btn" aria-label="Next image"
+                style="display:none">&#8594;</button>
         </div>
         <p id="lightbox-label" class="lightbox-label"></p>
     </div>
