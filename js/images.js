@@ -5,10 +5,12 @@
  */
 const CVIImages = {
     imageEl: null,
+    cameraEl: null,
     labelEl: null,
     attributionEl: null,
     prevBtn: null,
     nextBtn: null,
+    _cameraStream: null,
 
     // Cache: word -> array of { url, title }
     cache: new Map(),
@@ -24,6 +26,7 @@ const CVIImages = {
 
     init() {
         this.imageEl = document.getElementById('word-image');
+        this.cameraEl = document.getElementById('camera-feed');
         this.labelEl = document.getElementById('image-label');
         this.attributionEl = document.getElementById('image-attribution');
         this.prevBtn = document.getElementById('image-prev-btn');
@@ -31,12 +34,12 @@ const CVIImages = {
 
         var self = this;
         if (this.prevBtn) {
-            this.prevBtn.addEventListener('click', function() {
+            this.prevBtn.addEventListener('click', function () {
                 self.showPrevPhoto();
             });
         }
         if (this.nextBtn) {
-            this.nextBtn.addEventListener('click', function() {
+            this.nextBtn.addEventListener('click', function () {
                 self.showNextPhoto();
             });
         }
@@ -102,17 +105,69 @@ const CVIImages = {
         if (this.nextBtn) this.nextBtn.style.display = 'none';
     },
 
+    async _startCamera() {
+        if (this._cameraStream) return;
+        try {
+            this._cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            if (this.cameraEl) {
+                this.cameraEl.srcObject = this._cameraStream;
+                this.cameraEl.hidden = false;
+            }
+        } catch (err) {
+            console.error("Camera error:", err);
+            this._showTextOnly(this._currentWord);
+        }
+    },
+
+    _stopCamera() {
+        if (this._cameraStream) {
+            this._cameraStream.getTracks().forEach(function (track) { track.stop(); });
+            this._cameraStream = null;
+        }
+        if (this.cameraEl) {
+            this.cameraEl.hidden = true;
+            this.cameraEl.srcObject = null;
+        }
+    },
+
+    _showCamera(word) {
+        this._currentWord = word;
+        this._currentPhotos = [];
+        this._hideArrows();
+
+        this.imageEl.hidden = true;
+        this.imageEl.src = '';
+
+        this.labelEl.textContent = word.toUpperCase();
+        this.labelEl.className = 'image-label has-image';
+        this.attributionEl.textContent = 'Live Camera Feed';
+
+        if (this.cameraEl) {
+            this.cameraEl.hidden = false;
+        }
+
+        this._startCamera();
+    },
+
     /**
      * Show an image for the given word.
      * Queries Wikimedia Commons, filters for photos, displays result.
      */
     async showImage(word) {
         if (!word || !word.trim()) {
+            this._stopCamera();
             this._showDefault();
             return;
         }
 
         var normalized = word.toLowerCase().trim();
+
+        if (normalized === "me" || normalized === "you") {
+            this._showCamera(normalized);
+            return;
+        }
+
+        this._stopCamera();
 
         // Skip image loading for single letters
         if (normalized.length === 1) {
@@ -240,15 +295,15 @@ const CVIImages = {
 
         // Filter for actual photographs (JPEG, PNG, WebP — not SVG or GIF)
         var photoMimes = ['image/jpeg', 'image/png', 'image/webp'];
-        var photos = pages.filter(function(p) {
+        var photos = pages.filter(function (p) {
             return p.imageinfo &&
-                   p.imageinfo[0] &&
-                   photoMimes.indexOf(p.imageinfo[0].mime) !== -1;
+                p.imageinfo[0] &&
+                photoMimes.indexOf(p.imageinfo[0].mime) !== -1;
         });
 
         if (photos.length === 0) return [];
 
-        return photos.map(function(p) {
+        return photos.map(function (p) {
             var info = p.imageinfo[0];
             var thumbUrl = info.thumburl || info.url;
             var title = p.title ? p.title.replace('File:', '').replace(/\.[^.]+$/, '') : word;
@@ -277,7 +332,7 @@ const CVIImages = {
             this.attributionEl.textContent = 'Image from Wikimedia Commons';
         }
 
-        this.imageEl.onerror = function() {
+        this.imageEl.onerror = function () {
             self._showTextOnly(word);
         };
 
@@ -286,13 +341,13 @@ const CVIImages = {
             this.attributionEl.textContent = 'Preparing background removal...';
             this.imageEl.classList.add('processing');
 
-            CVIBackgroundRemoval.processImage(src, word).then(function(processedUrl) {
+            CVIBackgroundRemoval.processImage(src, word).then(function (processedUrl) {
                 if (self.imageEl.src === src || self.imageEl.src === processedUrl) {
                     self.imageEl.src = processedUrl;
                     self.imageEl.classList.remove('processing');
                     self._applyImageOutline && self._applyImageOutline();
                 }
-            }).catch(function() {
+            }).catch(function () {
                 self.imageEl.classList.remove('processing');
                 if (self._currentPhotos.length > 1) {
                     self.attributionEl.textContent =
@@ -371,15 +426,15 @@ const CVIImages = {
         var self = this;
         var words = wordListStr
             .split(',')
-            .map(function(w) { return w.trim().toLowerCase(); })
-            .filter(function(w) {
+            .map(function (w) { return w.trim().toLowerCase(); })
+            .filter(function (w) {
                 // Skip blanks and single characters
                 return w.length > 1;
             });
 
         // Remove duplicates
         var seen = {};
-        words = words.filter(function(w) {
+        words = words.filter(function (w) {
             if (seen[w]) return false;
             seen[w] = true;
             return true;
@@ -410,7 +465,7 @@ const CVIImages = {
 
             // Stagger requests — wait before each fetch (except the first)
             if (i > 0) {
-                await new Promise(function(resolve) { setTimeout(resolve, 350); });
+                await new Promise(function (resolve) { setTimeout(resolve, 350); });
             }
 
             try {
@@ -443,7 +498,7 @@ const CVIImages = {
         updateStatus('✓ All ' + total + ' word' + (total !== 1 ? 's' : '') + ' pre-loaded');
 
         // Clear the message after a few seconds
-        setTimeout(function() {
+        setTimeout(function () {
             if (statusEl) statusEl.textContent = '';
         }, 4000);
     },
@@ -452,6 +507,7 @@ const CVIImages = {
      * Hide image panel content entirely.
      */
     hideImage() {
+        this._stopCamera();
         this._showDefault();
     }
 };
